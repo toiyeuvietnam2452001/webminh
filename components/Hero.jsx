@@ -58,6 +58,20 @@ export default function Hero() {
                         </div>
 
                         <div className={styles.imageWrapper}>
+                            {/* Platform Logos */}
+                            <div className={`${styles.platformLogo} ${styles.logoFB}`}>
+                                <Image src="https://img.icons8.com/color/48/facebook-new.png" width={32} height={32} alt="Facebook Ads" />
+                            </div>
+                            <div className={`${styles.platformLogo} ${styles.logoGoogle}`}>
+                                <Image src="https://img.icons8.com/color/48/google-logo.png" width={32} height={32} alt="Google Ads" />
+                            </div>
+                            <div className={`${styles.platformLogo} ${styles.logoTikTok}`}>
+                                <Image src="https://img.icons8.com/color/48/tiktok.png" width={32} height={32} alt="TikTok Ads" />
+                            </div>
+                            <div className={`${styles.platformLogo} ${styles.logoZalo}`}>
+                                <div className={styles.zaloInner}>Z</div>
+                            </div>
+
                             <Image
                                 src="/hero-portrait.png"
                                 alt="Performance Marketing Specialist"

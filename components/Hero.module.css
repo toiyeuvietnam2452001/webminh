@@ -172,6 +172,56 @@
     filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.2));
     animation: float 6s ease-in-out infinite;
     z-index: 2;
+    /* Làm mờ nhẹ phần chân để hòa vào nền */
+    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+}
+
+.platformLogo {
+    position: absolute;
+    width: 52px;
+    height: 52px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.logoFB {
+    top: 5%;
+    right: 5%;
+    animation: float 4s ease-in-out infinite;
+}
+
+.logoGoogle {
+    top: 40%;
+    right: -12%;
+    animation: float 5.5s ease-in-out infinite 0.5s;
+}
+
+.logoTikTok {
+    bottom: 30%;
+    left: -15%;
+    animation: float 4.8s ease-in-out infinite 1s;
+}
+
+.logoZalo {
+    top: 25%;
+    left: -10%;
+    animation: float 6s ease-in-out infinite 1.5s;
+    background: #0068FF;
+}
+
+.zaloInner {
+    color: white;
+    font-weight: 900;
+    font-size: 1.2rem;
+    font-family: sans-serif;
 }
 
 /* Floating Ads Elements */
