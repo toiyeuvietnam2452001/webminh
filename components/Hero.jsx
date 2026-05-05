@@ -44,9 +44,19 @@ export default function Hero() {
                         </div>
                     </div>
 
-                    {/* Right: Portrait */}
+                    {/* Right: Portrait & Ads Elements */}
                     <div className={styles.imageSide}>
                         <div className={styles.imageGlow} />
+                        <div className={styles.techCircle} />
+
+                        <div className={styles.floatingBadgeCPA}>
+                            <div className={styles.badgeIcon}>🎯</div>
+                            <div>
+                                <div className={styles.badgeLabel}>CPA (Lead Mua Bán)</div>
+                                <div className={styles.badgeValue}>45,000đ <span className={styles.trendUp}>↓ 20%</span></div>
+                            </div>
+                        </div>
+
                         <div className={styles.imageWrapper}>
                             <Image
                                 src="/hero-portrait.png"
@@ -56,6 +66,14 @@ export default function Hero() {
                                 priority
                                 className={styles.portrait}
                             />
+                        </div>
+
+                        <div className={styles.floatingBadgeROAS}>
+                            <div className={styles.badgeIcon}>📈</div>
+                            <div>
+                                <div className={styles.badgeLabel}>Tỉ lệ chuyển đổi (CVR)</div>
+                                <div className={styles.badgeValue}>8.5% <span className={styles.trendUp}>↑ +2.1%</span></div>
+                            </div>
                         </div>
                     </div>
                 </div>

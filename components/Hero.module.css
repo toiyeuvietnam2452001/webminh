@@ -115,7 +115,6 @@
     flex-wrap: wrap;
 }
 
-/* Image side */
 .imageSide {
     display: flex;
     justify-content: center;
@@ -127,7 +126,7 @@
     position: absolute;
     width: 350px;
     height: 350px;
-    background: radial-gradient(circle, rgba(0, 212, 255, 0.15) 0%, rgba(0, 102, 255, 0.08) 40%, transparent 70%);
+    background: radial-gradient(circle, rgba(0, 212, 255, 0.2) 0%, rgba(0, 102, 255, 0.1) 40%, transparent 70%);
     border-radius: 50%;
     top: 50%;
     left: 50%;
@@ -135,6 +134,29 @@
     animation: pulse-glow 4s ease-in-out infinite;
     pointer-events: none;
     z-index: 0;
+}
+
+.techCircle {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    border: 1px dashed rgba(0, 212, 255, 0.3);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: spin 20s linear infinite;
+    z-index: 0;
+}
+
+@keyframes spin {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
 }
 
 .imageWrapper {
@@ -147,10 +169,73 @@
     max-width: 420px;
     height: auto;
     object-fit: contain;
-    filter: drop-shadow(0 0 40px rgba(0, 212, 255, 0.15));
+    filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.2));
     animation: float 6s ease-in-out infinite;
-    -webkit-mask-image: radial-gradient(ellipse 70% 65% at 50% 40%, black 45%, transparent 75%);
-    mask-image: radial-gradient(ellipse 70% 65% at 50% 40%, black 45%, transparent 75%);
+    z-index: 2;
+}
+
+/* Floating Ads Elements */
+.floatingBadgeCPA,
+.floatingBadgeROAS {
+    position: absolute;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: rgba(10, 15, 28, 0.7);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    backdrop-filter: blur(12px);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.floatingBadgeCPA {
+    top: 15%;
+    left: -10%;
+    animation: float 5s ease-in-out infinite 1s;
+}
+
+.floatingBadgeROAS {
+    bottom: 15%;
+    right: -5%;
+    animation: float 7s ease-in-out infinite 2.5s;
+}
+
+.badgeIcon {
+    font-size: 1.5rem;
+    background: rgba(0, 212, 255, 0.1);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+.badgeLabel {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+}
+
+.badgeValue {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.trendUp {
+    font-size: 0.8rem;
+    color: #00ff88;
+    background: rgba(0, 255, 136, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
 }
 
 /* Stats */
