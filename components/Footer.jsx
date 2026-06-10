@@ -1,17 +1,38 @@
 "use client";
 import { useState } from "react";
-import { Send, Phone, User, MessageSquare, ArrowRight } from "lucide-react";
+import { Send, Phone, User, MessageSquare } from "lucide-react";
 import styles from "./Footer.module.css";
 
 export default function Footer() {
-    const [form, setForm] = useState({ name: "", phone: "", message: "" });
+    const [form, setForm]           = useState({ name: "", phone: "", message: "" });
     const [submitted, setSubmitted] = useState(false);
+    const [loading, setLoading]     = useState(false);
+    const [error, setError]         = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setSubmitted(true);
-        setTimeout(() => setSubmitted(false), 3000);
-        setForm({ name: "", phone: "", message: "" });
+        setLoading(true);
+        setError(false);
+        try {
+            const res = await fetch("/api/contact", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(form),
+            });
+            if (res.ok) {
+                setSubmitted(true);
+                setForm({ name: "", phone: "", message: "" });
+                setTimeout(() => setSubmitted(false), 5000);
+            } else {
+                setError(true);
+                setTimeout(() => setError(false), 4000);
+            }
+        } catch {
+            setError(true);
+            setTimeout(() => setError(false), 4000);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -19,18 +40,16 @@ export default function Footer() {
             <div className={styles.glowTop} />
             <div className="container">
                 <div className={styles.grid}>
-                    {/* CTA + Info */}
                     <div className={styles.info}>
                         <h2 className={styles.ctaTitle}>
-                            Bắt đầu kỷ nguyên
+                            Bat dau ky nguyen
                             <br />
-                            <span className={styles.gradient}>bứt phá doanh số</span> mới
+                            <span className={styles.gradient}>but pha doanh so</span> moi
                         </h2>
                         <p className={styles.ctaDesc}>
-                            Liên hệ ngay để được tư vấn chiến lược Performance Marketing
-                            phù hợp với dự án BĐS của bạn. Miễn phí 100%.
+                            Lien he ngay de duoc tu van chien luoc Performance Marketing
+                            phu hop voi du an BDS cua ban. Mien phi 100%.
                         </p>
-
                         <div className={styles.contactItems}>
                             <a href="tel:0943510685" className={styles.contactItem}>
                                 <Phone size={18} />
@@ -43,13 +62,12 @@ export default function Footer() {
                         </div>
                     </div>
 
-                    {/* Contact Form */}
                     <form className={styles.form} onSubmit={handleSubmit}>
                         <div className={styles.inputGroup}>
                             <User size={18} className={styles.inputIcon} />
                             <input
                                 type="text"
-                                placeholder="Họ tên"
+                                placeholder="Ho ten"
                                 value={form.name}
                                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                                 required
@@ -60,7 +78,7 @@ export default function Footer() {
                             <Phone size={18} className={styles.inputIcon} />
                             <input
                                 type="tel"
-                                placeholder="Số điện thoại"
+                                placeholder="So dien thoai"
                                 value={form.phone}
                                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
                                 required
@@ -70,7 +88,7 @@ export default function Footer() {
                         <div className={styles.inputGroup}>
                             <MessageSquare size={18} className={styles.inputIcon} />
                             <textarea
-                                placeholder="Mô tả dự án hoặc vấn đề bạn đang gặp..."
+                                placeholder="Mo ta du an hoac van de ban dang gap..."
                                 rows={3}
                                 value={form.message}
                                 onChange={(e) => setForm({ ...form, message: e.target.value })}
@@ -80,29 +98,24 @@ export default function Footer() {
                         <button
                             type="submit"
                             className={`btn btn-primary ${styles.submitBtn}`}
-                            disabled={submitted}
+                            disabled={loading || submitted}
                         >
-                            {submitted ? (
-                                "Đã gửi thành công! ✓"
-                            ) : (
-                                <>
-                                    Gửi thông tin
-                                    <Send size={16} />
-                                </>
-                            )}
+                            {submitted ? "Da gui thanh cong! ✓" :
+                             error     ? "Loi, thu lai nhe!" :
+                             loading   ? "Dang gui..." :
+                             <><Send size={16} /> Gui thong tin</>}
                         </button>
                     </form>
                 </div>
 
-                {/* Footer bottom */}
                 <div className={styles.bottom}>
                     <p className={styles.copyright}>
                         © 2026 PerformanceAds. All rights reserved.
                     </p>
                     <div className={styles.bottomLinks}>
-                        <a href="#hero">Trang chủ</a>
-                        <a href="#features">Dịch vụ</a>
-                        <a href="#pricing">Bảng giá</a>
+                        <a href="#hero">Trang chu</a>
+                        <a href="#features">Dich vu</a>
+                        <a href="#pricing">Bang gia</a>
                     </div>
                 </div>
             </div>
