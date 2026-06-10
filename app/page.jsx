@@ -4,10 +4,12 @@ import Features from "@/components/Features";
 import HowItWorks from "@/components/HowItWorks";
 import Pricing from "@/components/Pricing";
 import Footer from "@/components/Footer";
+import ShaderBackground from "@/components/ShaderBackground";
 
 export default function Home() {
     return (
         <>
+            <ShaderBackground />
             <Navbar />
             <main>
                 <Hero />
