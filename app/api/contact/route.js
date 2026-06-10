@@ -16,12 +16,10 @@ export async function POST(request) {
             from: process.env.GMAIL_USER,
             to: process.env.GMAIL_USER,
             subject: `[Lead moi] ${name} - ${phone}`,
-            html: `
-                <h2>Khach hang moi tu minhnguyenmkt.vercel.app</h2>
-                <p><strong>Ho ten:</strong> ${name}</p>
-                <p><strong>SDT:</strong> ${phone}</p>
-                <p><strong>Noi dung:</strong> ${message || "Khong co"}</p>
-            `,
+            html: `<h2>Khach hang moi</h2>
+                   <p><b>Ho ten:</b> ${name}</p>
+                   <p><b>SDT:</b> ${phone}</p>
+                   <p><b>Noi dung:</b> ${message || "Khong co"}</p>`,
         });
 
         return Response.json({ success: true });
