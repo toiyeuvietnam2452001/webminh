@@ -42,13 +42,12 @@ export default function Footer() {
                 <div className={styles.grid}>
                     <div className={styles.info}>
                         <h2 className={styles.ctaTitle}>
-                            Bat dau ky nguyen
+                            {"Bat dau ky nguyen"}
                             <br />
-                            <span className={styles.gradient}>but pha doanh so</span> moi
+                            <span className={styles.gradient}>{"but pha doanh so"}</span> {"moi"}
                         </h2>
                         <p className={styles.ctaDesc}>
-                            Lien he ngay de duoc tu van chien luoc Performance Marketing
-                            phu hop voi du an BDS cua ban. Mien phi 100%.
+                            {"Lien he ngay de duoc tu van chien luoc Performance Marketing phu hop voi du an BDS cua ban. Mien phi 100%."}
                         </p>
                         <div className={styles.contactItems}>
                             <a href="tel:0943510685" className={styles.contactItem}>
@@ -88,7 +87,7 @@ export default function Footer() {
                         <div className={styles.inputGroup}>
                             <MessageSquare size={18} className={styles.inputIcon} />
                             <textarea
-                                placeholder="Mo ta du an hoac van de ban dang gap..."
+                                placeholder="Mo ta du an..."
                                 rows={3}
                                 value={form.message}
                                 onChange={(e) => setForm({ ...form, message: e.target.value })}
@@ -101,7 +100,7 @@ export default function Footer() {
                             disabled={loading || submitted}
                         >
                             {submitted ? "Da gui thanh cong! ✓" :
-                             error     ? "Loi, thu lai nhe!" :
+                             error     ? "Loi, thu lai!" :
                              loading   ? "Dang gui..." :
                              <><Send size={16} /> Gui thong tin</>}
                         </button>
