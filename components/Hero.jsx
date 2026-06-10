@@ -16,7 +16,7 @@ export default function Hero() {
                     <div className={styles.textSide}>
                         <div className={styles.badge}>
                             <span className={styles.badgeDot} />
-                            Performance Marketing Specialist
+                            Performance Marketing Expert
                         </div>
 
                         <h1 className={styles.title}>
