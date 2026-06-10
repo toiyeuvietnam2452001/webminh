@@ -153,7 +153,6 @@
     from {
         transform: translate(-50%, -50%) rotate(0deg);
     }
-
     to {
         transform: translate(-50%, -50%) rotate(360deg);
     }
@@ -172,7 +171,6 @@
     filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.2));
     animation: float 6s ease-in-out infinite;
     z-index: 2;
-    /* Làm mờ nhẹ phần chân để hòa vào nền */
     -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
     mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
 }
@@ -195,25 +193,25 @@
 .logoFB {
     top: 5%;
     right: 5%;
-    animation: float 4s ease-in-out infinite;
+    animation: floatLogo1 4s ease-in-out infinite;
 }
 
 .logoGoogle {
     top: 40%;
     right: -12%;
-    animation: float 5.5s ease-in-out infinite 0.5s;
+    animation: floatLogo2 5.5s ease-in-out infinite 0.7s;
 }
 
 .logoTikTok {
     bottom: 30%;
     left: -15%;
-    animation: float 4.8s ease-in-out infinite 1s;
+    animation: floatLogo3 4.8s ease-in-out infinite 1.2s;
 }
 
 .logoZalo {
     top: 25%;
     left: -10%;
-    animation: float 6s ease-in-out infinite 1.5s;
+    animation: floatLogo4 6s ease-in-out infinite 1.8s;
     background: #0068FF;
 }
 
@@ -331,6 +329,31 @@
     background: var(--border-glass);
 }
 
+/* ── Logo float animations ── */
+@keyframes floatLogo1 {
+    0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+    35%       { transform: translateY(-10px) rotate(4deg) scale(1.08); }
+    70%       { transform: translateY(-5px) rotate(-2deg) scale(1.03); }
+}
+
+@keyframes floatLogo2 {
+    0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+    40%       { transform: translateY(-13px) rotate(-5deg) scale(1.1); }
+    75%       { transform: translateY(-6px) rotate(3deg) scale(1.04); }
+}
+
+@keyframes floatLogo3 {
+    0%, 100% { transform: translateY(0px) scale(1) rotate(0deg); }
+    50%       { transform: translateY(-9px) scale(1.07) rotate(-3deg); }
+}
+
+@keyframes floatLogo4 {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    45%       { transform: translateY(-12px) rotate(6deg); }
+    80%       { transform: translateY(-4px) rotate(-4deg); }
+}
+
+/* ── Responsive Mobile ── */
 @media (max-width: 768px) {
     .grid {
         grid-template-columns: 1fr;
@@ -360,7 +383,7 @@
     }
 
     .portrait {
-        max-width: 280px;
+        max-width: 260px;
     }
 
     .stats {
@@ -378,5 +401,44 @@
     .orbBlue,
     .orbPurple {
         display: none;
+    }
+
+    /* Badge thu nhỏ trên mobile */
+    .floatingBadgeCPA {
+        top: 8%;
+        left: 0%;
+        padding: 6px 8px;
+        gap: 6px;
+        transform: scale(0.72);
+        transform-origin: left top;
+    }
+
+    .floatingBadgeROAS {
+        bottom: 8%;
+        right: 0%;
+        padding: 6px 8px;
+        gap: 6px;
+        transform: scale(0.72);
+        transform-origin: right bottom;
+    }
+
+    .badgeIcon {
+        width: 28px;
+        height: 28px;
+        font-size: 1rem;
+    }
+
+    .badgeLabel {
+        font-size: 0.6rem;
+    }
+
+    .badgeValue {
+        font-size: 0.85rem;
+    }
+
+    /* Logo nhỏ hơn trên mobile */
+    .platformLogo {
+        width: 40px;
+        height: 40px;
     }
 }
