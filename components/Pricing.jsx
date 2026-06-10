@@ -34,7 +34,7 @@ const plans = [
     },
     {
         name: "Gói Toàn Diện",
-        price: ">100",
+        price: "Trên 100",
         unit: "triệu/tháng",
         desc: "Dành cho CĐT lớn muốn phủ sóng toàn diện và bứt phá doanh số.",
         popular: false,
