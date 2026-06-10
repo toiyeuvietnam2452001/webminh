@@ -18,7 +18,7 @@ const plans = [
     },
     {
         name: "Gói Thực Chiến",
-        price: "30 – 100",
+        price: "30 - 100",
         unit: "triệu/tháng",
         desc: "Gói phổ biến nhất – phù hợp các dự án muốn scale nhanh và tối ưu chuyển đổi.",
         popular: true,
