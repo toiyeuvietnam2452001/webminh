@@ -4,7 +4,7 @@ import styles from "./Pricing.module.css";
 const plans = [
     {
         name: "Gói Khởi Tạo",
-        price: "15",
+        price: "20",
         unit: "triệu/tháng",
         desc: "Dành cho CĐT hoặc Sales cá nhân mới bắt đầu xây dựng kênh quảng cáo online.",
         popular: false,
@@ -18,7 +18,7 @@ const plans = [
     },
     {
         name: "Gói Thực Chiến",
-        price: "30",
+        price: "30 - 100",
         unit: "triệu/tháng",
         desc: "Gói phổ biến nhất – phù hợp các dự án muốn scale nhanh và tối ưu chuyển đổi.",
         popular: true,
@@ -34,7 +34,7 @@ const plans = [
     },
     {
         name: "Gói Toàn Diện",
-        price: "55",
+        price: ">100",
         unit: "triệu/tháng",
         desc: "Dành cho CĐT lớn muốn phủ sóng toàn diện và bứt phá doanh số.",
         popular: false,
@@ -86,7 +86,7 @@ export default function Pricing() {
                                     </li>
                                 ))}
                             </ul>
-                            <a
+                            
                                 href="#contact"
                                 className={`btn ${plan.popular ? "btn-primary" : "btn-outline"} ${styles.planBtn}`}
                             >
