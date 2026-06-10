@@ -69,7 +69,7 @@ export default function Hero() {
                                 <Image src="https://img.icons8.com/color/48/tiktok.png" width={32} height={32} alt="TikTok Ads" />
                             </div>
                             <div className={`${styles.platformLogo} ${styles.logoZalo}`}>
-                                <div className={styles.zaloInner}>Z</div>
+                                <Image src="https://img.icons8.com/color/48/zalo.png" width={32} height={32} alt="Zalo" />
                             </div>
 
                             <Image
