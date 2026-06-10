@@ -3,49 +3,49 @@ import styles from "./Pricing.module.css";
 
 const plans = [
     {
-        name: "Gói Khởi Tạo",
+        name: "Goi Khoi Tao",
         price: "20",
-        unit: "triệu/tháng",
-        desc: "Dành cho CĐT hoặc Sales cá nhân mới bắt đầu xây dựng kênh quảng cáo online.",
+        unit: "trieu/thang",
+        desc: "Danh cho CDT hoac Sales ca nhan moi bat dau xay dung kenh quang cao online.",
         popular: false,
         features: [
-            "Setup 1 kênh quảng cáo (Facebook hoặc Google)",
-            "Tối ưu phễu cơ bản",
-            "Báo cáo hàng tuần",
-            "Tư vấn chiến lược cơ bản",
-            "Hỗ trợ qua Zalo/Chat",
+            "Setup 1 kenh quang cao (Facebook hoac Google)",
+            "Toi uu pheu co ban",
+            "Bao cao hang tuan",
+            "Tu van chien luoc co ban",
+            "Ho tro qua Zalo/Chat",
         ],
     },
     {
-        name: "Gói Thực Chiến",
+        name: "Goi Thuc Chien",
         price: "30 - 100",
-        unit: "triệu/tháng",
-        desc: "Gói phổ biến nhất - phù hợp các dự án muốn scale nhanh và tối ưu chuyển đổi.",
+        unit: "trieu/thang",
+        desc: "Goi pho bien nhat - phu hop cac du an muon scale nhanh va toi uu chuyen doi.",
         popular: true,
         features: [
-            "Tất cả gói Khởi Tạo",
-            "Đa kênh: Facebook + Google + Zalo",
-            "Landing page chuyên dụng",
-            "A/B Testing liên tục",
-            "Tối ưu CPL & ROAS real-time",
-            "Báo cáo hàng ngày",
-            "Remarketing chuyên sâu",
+            "Tat ca goi Khoi Tao",
+            "Da kenh: Facebook + Google + Zalo",
+            "Landing page chuyen dung",
+            "A/B Testing lien tuc",
+            "Toi uu CPL & ROAS real-time",
+            "Bao cao hang ngay",
+            "Remarketing chuyen sau",
         ],
     },
     {
-        name: "Gói Toàn Diện",
-        price: "Trên 100",
-        unit: "triệu/tháng",
-        desc: "Dành cho CĐT lớn muốn phủ sóng toàn diện và bứt phá doanh số.",
+        name: "Goi Toan Dien",
+        price: "Tren 100",
+        unit: "trieu/thang",
+        desc: "Danh cho CDT lon muon phu song toan dien va but pha doanh so.",
         popular: false,
         features: [
-            "Tất cả gói Thực Chiến",
-            "Phủ thêm TikTok Ads, Cốc Cốc",
-            "Sản xuất Content & Video Ads",
-            "Đội ngũ chuyên trách riêng",
-            "Tư vấn chiến lược 1-1",
+            "Tat ca goi Thuc Chien",
+            "Phu them TikTok Ads, Coc Coc",
+            "San xuat Content & Video Ads",
+            "Doi ngu chuyen trach rieng",
+            "Tu van chien luoc 1-1",
             "Dashboard real-time 24/7",
-            "Cam kết KPI cứng",
+            "Cam ket KPI cung",
         ],
     },
 ];
@@ -55,12 +55,11 @@ export default function Pricing() {
         <section id="pricing" className="section">
             <div className="container">
                 <h2 className="section-title">
-                    Bảng giá <span>Dịch vụ</span>
+                    Bang gia <span>Dich vu</span>
                 </h2>
                 <p className="section-subtitle">
-                    Chọn gói dịch vụ phù hợp với quy mô dự án và mục tiêu kinh doanh của bạn.
+                    Chon goi dich vu phu hop voi quy mo du an va muc tieu kinh doanh cua ban.
                 </p>
-
                 <div className={styles.grid}>
                     {plans.map((plan, i) => (
                         <div
@@ -69,7 +68,7 @@ export default function Pricing() {
                         >
                             {plan.popular && (
                                 <div className={styles.badge}>
-                                    <Star size={14} /> Phổ biến nhất
+                                    <Star size={14} /> Pho bien nhat
                                 </div>
                             )}
                             <h3 className={styles.planName}>{plan.name}</h3>
@@ -90,7 +89,7 @@ export default function Pricing() {
                                 href="#contact"
                                 className={`btn ${plan.popular ? "btn-primary" : "btn-outline"} ${styles.planBtn}`}
                             >
-                                Bắt đầu ngay
+                                Bat dau ngay
                             </a>
                         </div>
                     ))}
