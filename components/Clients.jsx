@@ -3,20 +3,20 @@ import Image from "next/image";
 import styles from "./Clients.module.css";
 
 const logos = [
-  { src: "/logos/logo-vietstarland.png",    alt: "VietStar Land" },
-  { src: "/logos/logo-newstarland.png",     alt: "NewStar Land" },
-  { src: "/logos/logo-naman.png",           alt: "Naman Realty" },
-  { src: "/logos/logo-nhakimcuong.png",     alt: "Nha Kim Cuong" },
-  { src: "/logos/logo-ticaland.png",        alt: "Tica Land" },
-  { src: "/logos/logo-mayhomes.png",        alt: "MayHomes" },
-  { src: "/logos/logo-titanluxury.png",     alt: "Titan Luxury" },
-  { src: "/logos/logo-cengroup.png",        alt: "CenGroup" },
-  { src: "/logos/logo-dsun.png",            alt: "DSUN" },
-  { src: "/logos/logo-khaihoanland.png",    alt: "Khai Hoan Land" },
-  { src: "/logos/logo-smartland.png",       alt: "Smartland" },
-  { src: "/logos/logo-salereal.png",        alt: "SaleReal" },
-  { src: "/logos/logo-dongtayproperty.png", alt: "Dong Tay Property" },
-  { src: "/logos/logo-dongtayland.png",     alt: "Dong Tay Land" },
+  { src: "/logo-vietstarland.png",    alt: "VietStar Land" },
+  { src: "/logo-newstarland.png",     alt: "NewStar Land" },
+  { src: "/logo-naman.png",           alt: "Naman Realty" },
+  { src: "/logo-nhakimcuong.png",     alt: "Nha Kim Cuong" },
+  { src: "/logo-ticaland.png",        alt: "Tica Land" },
+  { src: "/logo-mayhomes.png",        alt: "MayHomes" },
+  { src: "/logo-titanluxury.png",     alt: "Titan Luxury" },
+  { src: "/logo-cengroup.png",        alt: "CenGroup" },
+  { src: "/logo-dsun.png",            alt: "DSUN" },
+  { src: "/logo-khaihoanland.png",    alt: "Khai Hoan Land" },
+  { src: "/logo-smartland.png",       alt: "Smartland" },
+  { src: "/logo-salereal.png",        alt: "SaleReal" },
+  { src: "/logo-dongtayproperty.png", alt: "Dong Tay Property" },
+  { src: "/logo-dongtayland.png",     alt: "Dong Tay Land" },
 ];
 
 export default function Clients() {
