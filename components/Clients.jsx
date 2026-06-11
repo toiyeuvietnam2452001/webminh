@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import styles from "./Clients.module.css";
 
@@ -33,14 +34,48 @@ const cdtLogos = [
 ];
 
 export default function Clients() {
+  const ref1 = useRef(null);
+  const ref2 = useRef(null);
+
+  useEffect(() => {
+    /* Reset animation — bắt phần tử repaint lại từ đầu */
+    const restart = () => {
+      [ref1.current, ref2.current].forEach((el) => {
+        if (!el) return;
+        const saved = el.style.animationName;
+        el.style.animationName = "none";
+        void el.offsetWidth; /* force reflow */
+        el.style.animationName = saved || "";
+      });
+    };
+
+    /* iOS Safari: tab đổi qua lại */
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") restart();
+    };
+
+    /* iOS Safari: back-forward cache (BFCache) */
+    const onPageShow = (e) => {
+      if (e.persisted) restart();
+    };
+
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("pageshow", onPageShow);
+
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pageshow", onPageShow);
+    };
+  }, []);
+
   return (
     <section className={styles.section}>
       <div className={styles.container}>
 
-        {/* DẢI 1 — Sàn đại lý, cuộn TRÁI */}
+        {/* ── Dải 1: Sàn đại lý — cuộn TRÁI ── */}
         <p className={styles.label}>Các Đối Tác Sàn Bất Động Sản</p>
         <div className={styles.track}>
-          <div className={styles.inner}>
+          <div ref={ref1} className={styles.inner}>
             {[...sanLogos, ...sanLogos].map((logo, i) => (
               <div key={i} className={styles.logoWrap}>
                 <Image
@@ -58,10 +93,10 @@ export default function Clients() {
 
         <div className={styles.divider} />
 
-        {/* DẢI 2 — Chủ đầu tư, cuộn PHẢI (ngược chiều) */}
+        {/* ── Dải 2: Chủ đầu tư — cuộn PHẢI ── */}
         <p className={styles.label}>Đồng Hành Cùng Các Chủ Đầu Tư</p>
         <div className={styles.track}>
-          <div className={`${styles.inner} ${styles.innerReverse}`}>
+          <div ref={ref2} className={`${styles.inner} ${styles.innerReverse}`}>
             {[...cdtLogos, ...cdtLogos].map((logo, i) => (
               <div key={i} className={styles.logoWrap}>
                 <Image
