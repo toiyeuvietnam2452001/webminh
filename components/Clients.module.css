@@ -1,0 +1,109 @@
+.section {
+  width: 100%;
+  padding: 40px 24px;
+}
+
+/* Khung trong suốt bao toàn bộ section */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  padding: 36px 0 32px;
+  overflow: hidden;
+}
+
+.label {
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(0, 212, 255, 0.6);
+  margin-bottom: 28px;
+  padding: 0 32px;
+}
+
+/* Track cuộn */
+.track {
+  position: relative;
+  overflow: hidden;
+}
+
+.track::before,
+.track::after {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 80px;
+  z-index: 2;
+  pointer-events: none;
+}
+.track::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(8,10,28,0.9), transparent);
+}
+.track::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(8,10,28,0.9), transparent);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: max-content;
+  animation: marquee 32s linear infinite;
+  padding: 4px 0;
+}
+
+.inner:hover {
+  animation-play-state: paused;
+}
+
+/* Khung từng logo */
+.logoWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 72px;
+  padding: 12px 22px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.logoWrap:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(0, 212, 255, 0.3);
+}
+
+.logo {
+  max-height: 48px;
+  width: auto !important;
+  object-fit: contain;
+  opacity: 1;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.08);
+}
+
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@media (max-width: 768px) {
+  .section { padding: 24px 12px; }
+  .container { border-radius: 16px; padding: 28px 0 24px; }
+  .inner { gap: 12px; animation-duration: 22s; }
+  .logoWrap { height: 60px; padding: 10px 16px; }
+  .logo { max-height: 40px; }
+  .track::before, .track::after { width: 40px; }
+}
