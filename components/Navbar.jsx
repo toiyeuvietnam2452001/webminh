@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Phone } from "lucide-react";
 import styles from "./Navbar.module.css";
 
 const navLinks = [
@@ -47,6 +47,25 @@ export default function Navbar() {
                         </a>
                     </li>
                 </ul>
+
+                {/* SĐT cố định — ẩn trên mobile */}
+                <a
+                    href="tel:0943510685"
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        color: "#00d4ff",
+                        fontWeight: 600,
+                        fontSize: "0.9rem",
+                        whiteSpace: "nowrap",
+                        transition: "opacity 0.2s",
+                    }}
+                    className={styles.phoneDesktop}
+                >
+                    <Phone size={15} strokeWidth={2} />
+                    0943 510 685
+                </a>
 
                 <a href="#contact" className={`btn btn-primary ${styles.ctaDesktop}`}>
                     Tư vấn ngay
