@@ -11,10 +11,11 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   backdrop-filter: blur(12px);
-  padding: 36px 0 32px;
+  padding: 28px 0 28px;   /* cân đối top/bottom bằng nhau */
   overflow: hidden;
 }
 
+/* Label tiêu đề mỗi hạng mục */
 .label {
   text-align: center;
   font-size: 0.75rem;
@@ -22,8 +23,13 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: rgba(0, 212, 255, 0.6);
-  margin-bottom: 28px;
+  margin-bottom: 18px;    /* giảm từ 28px → logo sát lên sát label hơn */
   padding: 0 32px;
+}
+
+/* Khoảng cách giữa 2 hạng mục */
+.divider {
+  margin: 22px 0;         /* khoảng cách đều giữa dải 1 và label 2 */
 }
 
 /* Track cuộn */
@@ -50,6 +56,7 @@
   background: linear-gradient(to left, rgba(8,10,28,0.9), transparent);
 }
 
+/* Dải logo — cuộn trái (sàn đại lý) */
 .inner {
   display: flex;
   align-items: center;
@@ -60,6 +67,15 @@
 }
 
 .inner:hover {
+  animation-play-state: paused;
+}
+
+/* Dải logo — cuộn phải (chủ đầu tư) */
+.innerReverse {
+  animation: marqueeReverse 32s linear infinite;
+}
+
+.innerReverse:hover {
   animation-play-state: paused;
 }
 
@@ -94,15 +110,25 @@
   transform: scale(1.08);
 }
 
+/* Animation cuộn trái */
 @keyframes marquee {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
 
+/* Animation cuộn phải (ngược chiều) */
+@keyframes marqueeReverse {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
 @media (max-width: 768px) {
   .section { padding: 24px 12px; }
-  .container { border-radius: 16px; padding: 28px 0 24px; }
+  .container { border-radius: 16px; padding: 22px 0 22px; }
+  .label { margin-bottom: 14px; }
+  .divider { margin: 16px 0; }
   .inner { gap: 12px; animation-duration: 22s; }
+  .innerReverse { animation-duration: 22s; }
   .logoWrap { height: 60px; padding: 10px 16px; }
   .logo { max-height: 40px; }
   .track::before, .track::after { width: 40px; }
