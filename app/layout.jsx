@@ -1,6 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
+  metadataBase: new URL("https://minhnguyenmkt.website"),
   title: "Performance Marketing BĐS | Chuyên gia Tối ưu Chuyển đổi",
   description:
     "Giải pháp Performance Marketing toàn diện cho Bất động sản – Từ chiến lược phân phối quảng cáo, tối ưu phễu chuyển đổi đến chốt sales thực chiến.",
