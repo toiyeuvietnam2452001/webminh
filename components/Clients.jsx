@@ -33,85 +33,94 @@ const cdtLogos = [
   { src: "/logo-cdt-mikgroup.png",   alt: "MIK Group" },
 ];
 
-export default function Clients() {
-  const ref1 = useRef(null);
-  const ref2 = useRef(null);
+/* ── RAF Marquee — không dùng CSS animation, tránh iOS Safari bug ── */
+function Marquee({ logos, reverse = false }) {
+  const trackRef = useRef(null);
+  const posRef   = useRef(reverse ? -50 : 0);
+  const rafRef   = useRef(null);
+  const tsRef    = useRef(null);
+  const paused   = useRef(false);
+  const SPEED    = 0.018; /* % per ms */
 
   useEffect(() => {
-    /* Reset animation — bắt phần tử repaint lại từ đầu */
-    const restart = () => {
-      [ref1.current, ref2.current].forEach((el) => {
-        if (!el) return;
-        const saved = el.style.animationName;
-        el.style.animationName = "none";
-        void el.offsetWidth; /* force reflow */
-        el.style.animationName = saved || "";
-      });
+    const track = trackRef.current;
+    if (!track) return;
+
+    const tick = (now) => {
+      if (tsRef.current !== null && !paused.current) {
+        const dt = now - tsRef.current;
+        if (reverse) {
+          posRef.current += SPEED * dt;
+          if (posRef.current >= 0) posRef.current = -50;
+        } else {
+          posRef.current -= SPEED * dt;
+          if (posRef.current <= -50) posRef.current = 0;
+        }
+        track.style.transform = `translate3d(${posRef.current}%,0,0)`;
+      }
+      tsRef.current = now;
+      rafRef.current = requestAnimationFrame(tick);
     };
 
-    /* iOS Safari: tab đổi qua lại */
-    const onVisibility = () => {
-      if (document.visibilityState === "visible") restart();
-    };
+    rafRef.current = requestAnimationFrame(tick);
 
-    /* iOS Safari: back-forward cache (BFCache) */
-    const onPageShow = (e) => {
-      if (e.persisted) restart();
-    };
+    /* Pause on hover */
+    const wrap = track.parentElement;
+    const onEnter = () => { paused.current = true; };
+    const onLeave = () => { paused.current = false; tsRef.current = null; };
+    wrap?.addEventListener("mouseenter", onEnter);
+    wrap?.addEventListener("mouseleave", onLeave);
 
-    document.addEventListener("visibilitychange", onVisibility);
-    window.addEventListener("pageshow", onPageShow);
+    /* iOS Safari: reset timestamp khi quay lại tab / BFCache */
+    const onVis  = () => { if (document.visibilityState === "visible") tsRef.current = null; };
+    const onShow = (e) => { if (e.persisted) tsRef.current = null; };
+    document.addEventListener("visibilitychange", onVis);
+    window.addEventListener("pageshow", onShow);
 
     return () => {
-      document.removeEventListener("visibilitychange", onVisibility);
-      window.removeEventListener("pageshow", onPageShow);
+      cancelAnimationFrame(rafRef.current);
+      wrap?.removeEventListener("mouseenter", onEnter);
+      wrap?.removeEventListener("mouseleave", onLeave);
+      document.removeEventListener("visibilitychange", onVis);
+      window.removeEventListener("pageshow", onShow);
     };
-  }, []);
+  }, [reverse]);
 
+  return (
+    <div className={styles.track}>
+      <div
+        ref={trackRef}
+        className={styles.inner}
+        style={{ transform: `translate3d(${reverse ? -50 : 0}%,0,0)` }}
+      >
+        {[...logos, ...logos].map((logo, i) => (
+          <div key={i} className={styles.logoWrap}>
+            <Image
+              src={logo.src}
+              alt={logo.alt}
+              width={160}
+              height={48}
+              style={{ objectFit: "contain" }}
+              className={styles.logo}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function Clients() {
   return (
     <section className={styles.section}>
       <div className={styles.container}>
-
-        {/* ── Dải 1: Sàn đại lý — cuộn TRÁI ── */}
         <p className={styles.label}>Các Đối Tác Sàn Bất Động Sản</p>
-        <div className={styles.track}>
-          <div ref={ref1} className={styles.inner}>
-            {[...sanLogos, ...sanLogos].map((logo, i) => (
-              <div key={i} className={styles.logoWrap}>
-                <Image
-                  src={logo.src}
-                  alt={logo.alt}
-                  width={160}
-                  height={48}
-                  style={{ objectFit: "contain" }}
-                  className={styles.logo}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
+        <Marquee logos={sanLogos} reverse={false} />
 
         <div className={styles.divider} />
 
-        {/* ── Dải 2: Chủ đầu tư — cuộn PHẢI ── */}
         <p className={styles.label}>Đồng Hành Cùng Các Chủ Đầu Tư</p>
-        <div className={styles.track}>
-          <div ref={ref2} className={`${styles.inner} ${styles.innerReverse}`}>
-            {[...cdtLogos, ...cdtLogos].map((logo, i) => (
-              <div key={i} className={styles.logoWrap}>
-                <Image
-                  src={logo.src}
-                  alt={logo.alt}
-                  width={160}
-                  height={48}
-                  style={{ objectFit: "contain" }}
-                  className={styles.logo}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
+        <Marquee logos={cdtLogos} reverse={true} />
       </div>
     </section>
   );
