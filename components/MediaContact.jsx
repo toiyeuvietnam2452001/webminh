@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { CheckCircle, Send } from "lucide-react";
 import styles from "./MediaContact.module.css";
 
 export default function MediaContact() {
@@ -92,7 +93,8 @@ export default function MediaContact() {
 
           {status === "ok" ? (
             <div className={styles.success}>
-              ✅ Gửi thành công! Chúng tôi sẽ liên hệ trong 2 giờ làm việc.
+              <CheckCircle size={22} strokeWidth={1.8} />
+              <span>Gửi thành công — chúng tôi sẽ liên hệ trong 2 giờ làm việc.</span>
             </div>
           ) : (
             <button
