@@ -269,3 +269,17 @@ img {
   from { opacity: 0; transform: translateY(40px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ===== VAPOR TEXT ANIMATION ===== */
+@keyframes vaporReveal {
+  0%   { opacity: 0; filter: blur(18px); transform: translateY(8px) scale(0.96); }
+  55%  { filter: blur(3px); opacity: 0.8; }
+  100% { opacity: 1; filter: blur(0px); transform: translateY(0) scale(1); }
+}
+
+.vapor-word {
+  display: inline-block;
+  opacity: 0;
+  animation: vaporReveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: opacity, filter, transform;
+}
