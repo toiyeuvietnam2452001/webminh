@@ -78,13 +78,16 @@
 }
 
 .success {
-  text-align: center;
-  padding: 16px;
-  background: rgba(0, 255, 136, 0.08);
-  border: 1px solid rgba(0, 255, 136, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  background: rgba(0, 212, 255, 0.06);
+  border: 1px solid rgba(0, 212, 255, 0.25);
   border-radius: 10px;
-  color: #00ff88;
-  font-weight: 600;
+  color: var(--accent-cyan);
+  font-weight: 500;
+  font-size: 0.95rem;
 }
 
 .error {
