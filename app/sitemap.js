@@ -1,10 +1,18 @@
 export default function sitemap() {
-    return [
-        {
-            url: "https://minhnguyenmkt.website",
-            lastModified: new Date(),
-            changeFrequency: "weekly",
-            priority: 1,
-        },
-    ];
+  const baseUrl = "https://minhnguyenmkt.website";
+
+  return [
+    {
+      url: baseUrl,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 1,
+    },
+    {
+      url: `${baseUrl}/media`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+  ];
 }
