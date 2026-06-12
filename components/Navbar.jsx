@@ -1,14 +1,15 @@
 "use client";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Menu, X, Phone } from "lucide-react";
 import styles from "./Navbar.module.css";
 
 const navLinks = [
-    { label: "Trang chủ", href: "#hero" },
-    { label: "Dịch vụ", href: "#features" },
-    { label: "Quy trình", href: "#process" },
-    { label: "Bảng giá", href: "#pricing" },
-    { label: "Liên hệ", href: "#contact" },
+    { label: "Trang chủ", href: "/" },
+    { label: "Media Quay Dựng", href: "/media" },
+    { label: "Dịch vụ Ads", href: "/#features" },
+    { label: "Bảng giá", href: "/#pricing" },
+    { label: "Liên hệ", href: "/#contact" },
 ];
 
 export default function Navbar() {
@@ -32,19 +33,19 @@ export default function Navbar() {
                 <ul className={`${styles.links} ${menuOpen ? styles.open : ""}`}>
                     {navLinks.map((link) => (
                         <li key={link.href}>
-                            <a
+                            <Link
                                 href={link.href}
                                 onClick={() => setMenuOpen(false)}
                                 className={styles.link}
                             >
                                 {link.label}
-                            </a>
+                            </Link>
                         </li>
                     ))}
                     <li className={styles.ctaMobile}>
-                        <a href="#contact" className="btn btn-primary" onClick={() => setMenuOpen(false)}>
+                        <Link href="/#contact" className="btn btn-primary" onClick={() => setMenuOpen(false)}>
                             Tư vấn ngay
-                        </a>
+                        </Link>
                     </li>
                 </ul>
 
@@ -67,9 +68,9 @@ export default function Navbar() {
                     0943 510 685
                 </a>
 
-                <a href="#contact" className={`btn btn-primary ${styles.ctaDesktop}`}>
+                <Link href="/#contact" className={`btn btn-primary ${styles.ctaDesktop}`}>
                     Tư vấn ngay
-                </a>
+                </Link>
 
                 <button
                     className={styles.hamburger}
