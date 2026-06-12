@@ -40,7 +40,7 @@ function Marquee({ logos, reverse = false }) {
   const rafRef   = useRef(null);
   const tsRef    = useRef(null);
   const paused   = useRef(false);
-  const SPEED    = 0.018; /* % per ms */
+  const SPEED    = 0.0016; /* % per ms — tương đương animation 32s */
 
   useEffect(() => {
     const track = trackRef.current;
