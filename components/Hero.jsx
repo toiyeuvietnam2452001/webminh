@@ -6,7 +6,7 @@ import styles from "./Hero.module.css";
 import VaporTitle from "./VaporTitle";
 
 /* ─── Counter đếm số từ 0 lên khi scroll đến ─── */
-function CountUp({ target, suffix = "", duration = 1800 }) {
+function CountUp({ target, prefix = "", suffix = "", duration = 1800 }) {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
   const triggered = useRef(false);
@@ -33,7 +33,7 @@ function CountUp({ target, suffix = "", duration = 1800 }) {
     return () => obs.disconnect();
   }, [target, duration]);
 
-  return <span ref={ref} className={styles.statNumber}>{count}{suffix}</span>;
+  return <span ref={ref} className={styles.statNumber}>{prefix}{count}{suffix}</span>;
 }
 
 /* ─── Hero Section ─── */
@@ -112,8 +112,16 @@ export default function Hero() {
         {/* Stats */}
         <div
           className={styles.stats}
-          style={{ animation: "heroFadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.4s both" }}
+          style={{
+            animation: "heroFadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.4s both",
+            maxWidth: "900px",
+          }}
         >
+          <div className={styles.stat}>
+            <CountUp target={60} suffix=" Tỷ+" />
+            <span className={styles.statLabel}>Ngân sách quản lý</span>
+          </div>
+          <div className={styles.divider} />
           <div className={styles.stat}>
             <CountUp target={500} suffix="+" />
             <span className={styles.statLabel}>Chiến dịch triển khai</span>
