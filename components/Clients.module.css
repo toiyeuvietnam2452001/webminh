@@ -6,11 +6,11 @@
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: 20px;
   backdrop-filter: blur(12px);
-  padding: 28px 0 28px;
+  padding: 28px 0;
   overflow: hidden;
 }
 
@@ -20,7 +20,7 @@
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(0, 212, 255, 0.6);
+  color: rgba(0,212,255,0.6);
   margin-bottom: 18px;
   padding: 0 32px;
 }
@@ -29,14 +29,10 @@
   margin: 22px 0;
 }
 
-/* Track — force GPU layer để Safari render đúng */
+/* Track — overflow hidden cho fade edges */
 .track {
   position: relative;
   overflow: hidden;
-  -webkit-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
-  -webkit-perspective: 1000;
-  perspective: 1000;
 }
 
 .track::before,
@@ -57,7 +53,7 @@
   background: linear-gradient(to left, rgba(8,10,28,0.9), transparent);
 }
 
-/* Inner — backface-visibility fix iOS Safari */
+/* Inner — RAF sẽ set transform trực tiếp, không dùng CSS animation */
 .inner {
   display: flex;
   align-items: center;
@@ -65,87 +61,46 @@
   width: max-content;
   padding: 4px 0;
   will-change: transform;
-  -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  animation: marquee 32s linear infinite;
-  -webkit-animation: marquee 32s linear infinite;
-}
-
-.inner:hover {
-  animation-play-state: paused;
-  -webkit-animation-play-state: paused;
-}
-
-.innerReverse {
-  will-change: transform;
   -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  animation: marqueeReverse 32s linear infinite;
-  -webkit-animation: marqueeReverse 32s linear infinite;
 }
 
-.innerReverse:hover {
-  animation-play-state: paused;
-  -webkit-animation-play-state: paused;
-}
-
+/* Logo card cố định width — tránh layout shift khi ảnh chưa load */
 .logoWrap {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  width: 196px;
   height: 72px;
-  padding: 12px 22px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 18px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: 12px;
   transition: background 0.3s, border-color 0.3s;
 }
 
 .logoWrap:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(0, 212, 255, 0.3);
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(0,212,255,0.3);
 }
 
 .logo {
-  max-height: 48px;
-  width: auto !important;
+  height: 48px;
+  width: 160px;
   object-fit: contain;
-  opacity: 1;
-  transition: transform 0.3s ease;
+  flex-shrink: 0;
 }
 
-.logo:hover {
-  transform: scale(1.08);
-}
-
-/* Dùng translate3d thay translateX — bắt buộc để Safari tạo GPU layer */
-@keyframes marquee {
-  from { transform: translate3d(0, 0, 0); }
-  to   { transform: translate3d(-50%, 0, 0); }
-}
-@-webkit-keyframes marquee {
-  from { -webkit-transform: translate3d(0, 0, 0); }
-  to   { -webkit-transform: translate3d(-50%, 0, 0); }
-}
-
-@keyframes marqueeReverse {
-  from { transform: translate3d(-50%, 0, 0); }
-  to   { transform: translate3d(0, 0, 0); }
-}
-@-webkit-keyframes marqueeReverse {
-  from { -webkit-transform: translate3d(-50%, 0, 0); }
-  to   { -webkit-transform: translate3d(0, 0, 0); }
-}
+.logo:hover { transform: scale(1.06); }
 
 @media (max-width: 768px) {
   .section { padding: 24px 12px; }
-  .container { border-radius: 16px; padding: 22px 0 22px; }
+  .container { border-radius: 16px; padding: 22px 0; }
   .label { margin-bottom: 14px; }
   .divider { margin: 16px 0; }
-  .inner { gap: 12px; animation-duration: 22s; -webkit-animation-duration: 22s; }
-  .innerReverse { animation-duration: 22s; -webkit-animation-duration: 22s; }
-  .logoWrap { height: 60px; padding: 10px 16px; }
-  .logo { max-height: 40px; }
+  .inner { gap: 12px; }
+  .logoWrap { width: 160px; height: 60px; padding: 10px 12px; }
+  .logo { height: 40px; width: 136px; }
   .track::before, .track::after { width: 40px; }
 }
