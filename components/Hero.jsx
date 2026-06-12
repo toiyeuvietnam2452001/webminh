@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Play } from "lucide-react";
 import Image from "next/image";
 import styles from "./Hero.module.css";
+import VaporTitle from "./VaporTitle";
 
 /* ─── Counter đếm số từ 0 lên khi scroll đến ─── */
 function CountUp({ target, suffix = "", duration = 1800 }) {
@@ -46,7 +47,7 @@ export default function Hero() {
       <div className={`container ${styles.content}`}>
         <div className={styles.grid}>
 
-          {/* Left — slide từ trái vào */}
+          {/* Left — badge + VaporTitle + subtitle + buttons */}
           <div
             className={styles.textSide}
             style={{ animation: "heroFadeLeft 0.9s cubic-bezier(0.22,1,0.36,1) both" }}
@@ -55,17 +56,15 @@ export default function Hero() {
               <span className={styles.badgeDot} />
               Performance Marketing Expert
             </div>
-            <h1 className={styles.title}>
-              Tối ưu hoá sức mạnh
-              <br />
-              <span className={styles.gradient}>Performance Marketing</span>
-              <br />
-              Bất động sản
-            </h1>
+
+            {/* ── Tiêu đề dạng particle hội tụ ── */}
+            <VaporTitle />
+
             <p className={styles.subtitle}>
               Chiến lược quảng cáo đa kênh, tối ưu phễu chuyển đổi từ Click → Lead → Chốt Sales.
               Đo lường bằng doanh số thực – không phải vanity metrics.
             </p>
+
             <div className={styles.actions}>
               <a href="#contact" className="btn btn-primary">
                 Bắt đầu ngay <ArrowRight size={18} />
@@ -76,7 +75,7 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Right — slide từ phải vào, delay nhẹ */}
+          {/* Right — avatar & floating badges */}
           <div
             className={styles.imageSide}
             style={{ animation: "heroFadeRight 0.9s cubic-bezier(0.22,1,0.36,1) 0.15s both" }}
@@ -129,7 +128,7 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Stats — fade từ dưới lên, delay sau cùng */}
+        {/* Stats */}
         <div
           className={styles.stats}
           style={{ animation: "heroFadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.4s both" }}
