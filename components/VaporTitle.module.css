@@ -1,0 +1,45 @@
+/* ── Tiêu đề khớp Hero.module.css ── */
+.title {
+  font-size: 3.2rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  margin-bottom: 24px;
+}
+
+/* Gradient cho "Performance Marketing" */
+.gradient {
+  background: linear-gradient(135deg, #00d4ff, #0066ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Animation: mờ → rõ, từng từ ── */
+@keyframes vaporReveal {
+  0% {
+    opacity: 0;
+    filter: blur(18px);
+    transform: translateY(8px) scale(0.96);
+  }
+  55% {
+    filter: blur(3px);
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0) scale(1);
+  }
+}
+
+.word {
+  display: inline-block;
+  opacity: 0;
+  animation: vaporReveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: opacity, filter, transform;
+}
+
+@media (max-width: 768px) {
+  .title { font-size: 2.2rem; }
+}
