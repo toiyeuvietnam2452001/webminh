@@ -1,5 +1,5 @@
-```
 import "./globals.css";
+import Script from "next/script";
 
 export const metadata = {
   metadataBase: new URL("https://minhnguyenmkt.website"),
@@ -31,6 +31,20 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
+        {/* Google Analytics GA4 */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-GNG3KPK3QH"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-GNG3KPK3QH');
+          `}
+        </Script>
+
         <div className="bg-grid" />
         <div className="bg-radial-top" />
         {children}
@@ -38,4 +52,3 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
-```
