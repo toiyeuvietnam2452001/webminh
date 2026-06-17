@@ -4,12 +4,12 @@ import { Menu, X, Phone } from "lucide-react";
 import styles from "./Navbar.module.css";
 
 const navLinks = [
-    { label: "Trang chủ",    href: "/"          },
-    { label: "Dịch vụ Ads",  href: "/#features" },
-    { label: "Quy trình",    href: "/#process"  },
-    { label: "Bảng giá Ads", href: "/#pricing"  },
-    { label: "Dịch vụ Media",href: "/media"     },
-    { label: "Liên hệ",      href: "/#contact"  },
+    { label: "Trang chủ",   href: "/"          },
+    { label: "Dịch vụ Ads", href: "/#features" },
+    { label: "Quy trình",   href: "/#process"  },
+    { label: "Bảng giá",    href: "/#pricing"  },
+    { label: "Media",        href: "/media"     },
+    { label: "Liên hệ",     href: "/#contact"  },
 ];
 
 export default function Navbar() {
