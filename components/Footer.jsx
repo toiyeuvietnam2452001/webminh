@@ -65,11 +65,15 @@ export default function Footer() {
                             </a>
                             <div className={styles.contactItem} style={{ alignItems: "flex-start" }}>
                                 <MapPin size={18} style={{ marginTop: "2px", flexShrink: 0 }} />
-                                <div className={styles.addressBlock}>
-                                    <p><strong>VP Hà Nội:</strong> Số nhà 16, Ngõ 34, phố Phương Mai, Phường Kim Liên, Hà Nội</p>
-                                    <p><strong>VP TP.HCM 1:</strong> 1 đường 59, Bình Trưng, Thủ Đức, Tp.HCM</p>
-                                    <p><strong>VP TP.HCM 2:</strong> Lầu 3, Wiyo Complex, Bình Trưng, Thủ Đức, Tp.HCM</p>
-                                </div>
+                                <span><strong>VP Hà Nội:</strong> Số nhà 16, Ngõ 34, phố Phương Mai, Phường Kim Liên, Hà Nội</span>
+                            </div>
+                            <div className={styles.contactItem} style={{ alignItems: "flex-start" }}>
+                                <MapPin size={18} style={{ marginTop: "2px", flexShrink: 0 }} />
+                                <span><strong>VP TP.HCM 1:</strong> 1 đường 59, Bình Trưng, Thủ Đức, Tp.HCM</span>
+                            </div>
+                            <div className={styles.contactItem} style={{ alignItems: "flex-start" }}>
+                                <MapPin size={18} style={{ marginTop: "2px", flexShrink: 0 }} />
+                                <span><strong>VP TP.HCM 2:</strong> Lầu 3, Wiyo Complex, Bình Trưng, Thủ Đức, Tp.HCM</span>
                             </div>
                         </div>
                     </div>
