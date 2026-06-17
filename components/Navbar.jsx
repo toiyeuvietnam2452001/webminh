@@ -49,29 +49,26 @@ export default function Navbar() {
                     </li>
                 </ul>
 
-                {/* SĐT cố định — ẩn trên mobile qua CSS */}
-                <a
-                    href="tel:0943510685"
-                    className={styles.phoneDesktop}
-                >
-                    <Phone size={15} strokeWidth={2} />
-                    0943 510 685
-                </a>
+                {/* Nhóm phải: SĐT + Zalo + CTA */}
+                <div className={styles.rightGroup}>
+                    <a href="tel:0943510685" className={styles.phoneDesktop}>
+                        <Phone size={15} strokeWidth={2} />
+                        0943 510 685
+                    </a>
 
-                {/* Nút Zalo cạnh SĐT */}
-                <a
-                    href="https://zalo.me/0943510685"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.phoneDesktop}
-                    style={{ background: "#0068FF", color: "#fff", padding: "6px 14px", borderRadius: "50px", fontWeight: 700, fontSize: "0.85rem" }}
-                >
-                    Zalo
-                </a>
+                    <a
+                        href="https://zalo.me/0943510685"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.zaloBtn}
+                    >
+                        Zalo
+                    </a>
 
-                <a href="#contact" className={`btn btn-primary ${styles.ctaDesktop}`}>
-                    Tư vấn ngay
-                </a>
+                    <a href="#contact" className={`btn btn-primary ${styles.ctaDesktop}`}>
+                        Tư vấn ngay
+                    </a>
+                </div>
 
                 <button
                     className={styles.hamburger}
