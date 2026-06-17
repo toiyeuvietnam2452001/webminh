@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Send, Phone, User, MessageSquare } from "lucide-react";
+import { Send, Phone, User, MessageSquare, Mail, MapPin } from "lucide-react";
 import styles from "./Footer.module.css";
 
 export default function Footer() {
@@ -55,10 +55,22 @@ export default function Footer() {
                                 <Phone size={18} />
                                 <span>0943 510 685</span>
                             </a>
+                            <a href="mailto:dopaminh01@gmail.com" className={styles.contactItem}>
+                                <Mail size={18} />
+                                <span>dopaminh01@gmail.com</span>
+                            </a>
                             <a href="https://zalo.me/0943510685" className={styles.contactItem} target="_blank" rel="noopener noreferrer">
                                 <MessageSquare size={18} />
                                 <span>Chat Zalo</span>
                             </a>
+                            <div className={styles.contactItem} style={{ alignItems: "flex-start" }}>
+                                <MapPin size={18} style={{ marginTop: "2px", flexShrink: 0 }} />
+                                <div className={styles.addressBlock}>
+                                    <p><strong>VP Hà Nội:</strong> Số nhà 16, Ngõ 34, phố Phương Mai, Phường Kim Liên, Hà Nội</p>
+                                    <p><strong>VP TP.HCM 1:</strong> 1 đường 59, Bình Trưng, Thủ Đức, Tp.HCM</p>
+                                    <p><strong>VP TP.HCM 2:</strong> Lầu 3, Wiyo Complex, Bình Trưng, Thủ Đức, Tp.HCM</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
