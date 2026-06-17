@@ -1,8 +1,6 @@
 .navbar {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 0; left: 0; right: 0;
     z-index: 1000;
     padding: 16px 0;
     transition: all 0.4s ease;
@@ -17,21 +15,21 @@
 }
 
 .inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
+    max-width: 100%;
+    padding: 0 32px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 12px;
 }
 
 .logo {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 700;
     letter-spacing: -0.02em;
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-shrink: 0;
 }
 
 .logoIcon {
@@ -39,14 +37,17 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
 }
 
+/* Nav links — chiếm phần còn lại và căn giữa */
 .links {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 24px;
     list-style: none;
+    flex: 1;
+    justify-content: center;
 }
 
 .link {
@@ -61,41 +62,48 @@
 .link::after {
     content: "";
     position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 2px;
+    bottom: -4px; left: 0;
+    width: 0; height: 2px;
     background: var(--accent-gradient);
     transition: width 0.3s ease;
     border-radius: 1px;
 }
 
-.link:hover {
-    color: var(--text-primary);
-}
-
-.link:hover::after {
-    width: 100%;
-}
+.link:hover { color: var(--text-primary); }
+.link:hover::after { width: 100%; }
 
 .ctaDesktop {
     padding: 9px 18px;
     font-size: 0.85rem;
     white-space: nowrap;
+    flex-shrink: 0;
 }
 
-.ctaMobile {
-    display: none;
-}
+.ctaMobile { display: none; }
 
-/* Nhóm phải navbar */
+/* Nhóm phải: SĐT + Zalo + CTA */
 .rightGroup {
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-shrink: 0;
 }
 
-/* Nút Zalo */
+/* SĐT */
+.phoneDesktop {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #00d4ff;
+    font-weight: 600;
+    font-size: 0.84rem;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+.phoneDesktop:hover { opacity: 0.75; }
+
+/* Zalo */
 .zaloBtn {
     display: flex;
     align-items: center;
@@ -106,29 +114,14 @@
     font-weight: 700;
     font-size: 0.82rem;
     text-decoration: none;
+    white-space: nowrap;
     transition: opacity 0.2s;
-    white-space: nowrap;
 }
+.zaloBtn:hover { opacity: 0.85; }
 
-.zaloBtn:hover {
-    opacity: 0.85;
-}
-
-/* SĐT cố định trên navbar — chỉ hiện desktop */
-.phoneDesktop {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: #00d4ff;
-    font-weight: 600;
-    font-size: 0.85rem;
-    white-space: nowrap;
-    transition: opacity 0.2s ease;
-    text-decoration: none;
-}
-
-.phoneDesktop:hover {
-    opacity: 0.75;
+/* Mobile SĐT + Zalo riêng */
+.mobileContact {
+    display: none;
 }
 
 .hamburger {
@@ -141,44 +134,42 @@
 }
 
 @media (max-width: 768px) {
+    .inner { padding: 0 16px; gap: 8px; }
+
     .links {
         position: fixed;
-        top: 0;
-        right: -100%;
+        top: 0; right: -100%;
         width: 75%;
         max-width: 320px;
         height: 100vh;
         background: rgba(10, 14, 26, 0.97);
         backdrop-filter: blur(30px);
         flex-direction: column;
+        justify-content: flex-start;
         padding: 80px 32px 32px;
         gap: 24px;
         transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         border-left: 1px solid var(--border-glass);
     }
 
-    .links.open {
-        right: 0;
-    }
+    .links.open { right: 0; }
+    .link { font-size: 1.05rem; }
+    .ctaDesktop { display: none; }
+    .ctaMobile { display: block; margin-top: 16px; }
 
-    .link {
-        font-size: 1.05rem;
-    }
+    /* Ẩn desktop rightGroup, hiện mobile contact */
+    .rightGroup { display: none; }
 
-    .ctaDesktop {
-        display: none;
-    }
-
-    .ctaMobile {
-        display: block;
-        margin-top: 16px;
+    .mobileContact {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: auto;
     }
 
     .hamburger {
         display: block;
         z-index: 1001;
+        flex-shrink: 0;
     }
-
-    /* Ẩn nhóm phải trên mobile */
-    .rightGroup { display: none; }
 }
