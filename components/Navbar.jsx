@@ -70,6 +70,17 @@ export default function Navbar() {
                     </a>
                 </div>
 
+                {/* SĐT + Zalo trên mobile */}
+                <div className={styles.mobileContact}>
+                    <a href="tel:0943510685" className={styles.phoneDesktop}>
+                        <Phone size={14} strokeWidth={2} />
+                        0943 510 685
+                    </a>
+                    <a href="https://zalo.me/0943510685" target="_blank" rel="noopener noreferrer" className={styles.zaloBtn}>
+                        Zalo
+                    </a>
+                </div>
+
                 <button
                     className={styles.hamburger}
                     onClick={() => setMenuOpen(!menuOpen)}
