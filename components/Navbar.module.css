@@ -86,6 +86,32 @@
     display: none;
 }
 
+/* Nhóm phải navbar */
+.rightGroup {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+/* Nút Zalo */
+.zaloBtn {
+    display: flex;
+    align-items: center;
+    padding: 7px 18px;
+    border-radius: 50px;
+    background: #0068FF;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+}
+
+.zaloBtn:hover {
+    opacity: 0.85;
+}
+
 /* SĐT cố định trên navbar — chỉ hiện desktop */
 .phoneDesktop {
     display: flex;
@@ -151,8 +177,6 @@
         z-index: 1001;
     }
 
-    /* Ẩn SĐT trên mobile — tránh navbar bị chật */
-    .phoneDesktop {
-        display: none;
-    }
+    /* Ẩn nhóm phải trên mobile */
+    .rightGroup { display: none; }
 }
