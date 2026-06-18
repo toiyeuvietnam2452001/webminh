@@ -12,38 +12,42 @@
   gap: 12px;
   position: relative;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 245, 255, 0.12);
+  background: rgba(8, 20, 55, 0.82);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(0, 245, 255, 0.22);
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    0 8px 32px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 0 40px rgba(0, 100, 200, 0.06);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card:hover {
   transform: translateY(-4px);
+  background: rgba(10, 25, 65, 0.88);
   box-shadow:
-    0 16px 40px rgba(0, 0, 0, 0.35),
-    0 0 20px rgba(0, 245, 255, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    0 16px 40px rgba(0, 0, 0, 0.5),
+    0 0 24px rgba(0, 245, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
 }
 
 .highlighted {
-  background: rgba(0, 212, 255, 0.08);
-  border-color: rgba(0, 212, 255, 0.35);
+  background: rgba(0, 40, 90, 0.85);
+  border-color: rgba(0, 212, 255, 0.45);
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    0 0 24px rgba(0, 212, 255, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    0 8px 32px rgba(0, 0, 0, 0.45),
+    0 0 28px rgba(0, 212, 255, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 0 40px rgba(0, 150, 255, 0.08);
 }
 
 .highlighted:hover {
+  background: rgba(0, 50, 110, 0.9);
   box-shadow:
-    0 16px 40px rgba(0, 0, 0, 0.35),
-    0 0 36px rgba(0, 212, 255, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    0 16px 40px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(0, 212, 255, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .badge {
@@ -136,14 +140,13 @@
 }
 
 .ctaOutline {
-  border: 1px solid rgba(0, 212, 255, 0.35);
-  background: rgba(0, 212, 255, 0.05);
+  border: 1px solid rgba(0, 212, 255, 0.4);
+  background: rgba(0, 212, 255, 0.07);
   color: var(--text-primary);
-  backdrop-filter: blur(8px);
 }
 
 .ctaOutline:hover {
-  background: rgba(0, 212, 255, 0.12);
+  background: rgba(0, 212, 255, 0.15);
   border-color: var(--accent-cyan);
 }
 
