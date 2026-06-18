@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { Target, BarChart3, Zap, Shield } from "lucide-react";
+import { GlowCard } from "./GlowCard";
 import styles from "./Features.module.css";
 
 const features = [
@@ -35,7 +36,6 @@ export default function Features() {
       const obs = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
-            /* delay theo thứ tự card */
             setTimeout(() => {
               el.style.opacity = "1";
               el.style.transform = "translateY(0)";
@@ -64,10 +64,11 @@ export default function Features() {
 
         <div className={styles.grid}>
           {features.map((f, i) => (
-            <div
+            <GlowCard
               key={i}
               ref={(el) => (cardRefs.current[i] = el)}
-              className={`glass-card ${styles.card}`}
+              className={styles.card}
+              glowColor="cyan"
               style={{
                 opacity: 0,
                 transform: "translateY(40px)",
@@ -79,7 +80,7 @@ export default function Features() {
               </div>
               <h3 className={styles.cardTitle}>{f.title}</h3>
               <p className={styles.cardDesc}>{f.desc}</p>
-            </div>
+            </GlowCard>
           ))}
         </div>
       </div>
