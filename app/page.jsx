@@ -5,21 +5,21 @@ import Features from "@/components/Features";
 import HowItWorks from "@/components/HowItWorks";
 import Pricing from "@/components/Pricing";
 import Footer from "@/components/Footer";
-import ShaderBackground from "@/components/ShaderBackground";
+import ScrollBgManager from "@/components/ScrollBgManager";
 
 export default function Home() {
-    return (
-        <>
-            <ShaderBackground />
-            <Navbar />
-            <main>
-                <Hero />
-                <Clients />
-                <Features />
-                <HowItWorks />
-                <Pricing />
-            </main>
-            <Footer />
-        </>
-    );
+  return (
+    <>
+      <ScrollBgManager />
+      <Navbar />
+      <main>
+        <Hero />
+        <Clients />
+        <Features />
+        <HowItWorks />
+        <Pricing />
+      </main>
+      <Footer />
+    </>
+  );
 }
