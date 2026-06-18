@@ -1,6 +1,6 @@
 import Navbar        from "@/components/Navbar";
 import Footer        from "@/components/Footer";
-import ShaderBackground from "@/components/ShaderBackground";
+import SmokeBackground from "@/components/SmokeBackground";
 import MediaServices from "@/components/MediaServices";
 import MediaEquipment from "@/components/MediaEquipment";
 import MediaPricing  from "@/components/MediaPricing";
@@ -14,7 +14,7 @@ export const metadata = {
 export default function MediaPage() {
   return (
     <>
-      <ShaderBackground />
+      <SmokeBackground color="#0044cc" />
       <Navbar />
       <main style={{ paddingTop: "80px", position: "relative", zIndex: 10 }}>
 
