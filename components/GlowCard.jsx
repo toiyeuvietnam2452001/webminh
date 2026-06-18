@@ -18,9 +18,9 @@ const GLOW_STYLES = `
     border: var(--border-size) solid transparent;
     border-radius: calc(var(--radius) * 1px);
     background-attachment: fixed;
-    background-size: calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)));
+    background-size: 100vw 100vh;
+    background-position: 0 0;
     background-repeat: no-repeat;
-    background-position: 50% 50%;
     mask: linear-gradient(transparent, transparent), linear-gradient(white, white);
     mask-clip: padding-box, border-box;
     mask-composite: intersect;
@@ -40,7 +40,7 @@ const GLOW_STYLES = `
     background-image: radial-gradient(
       calc(var(--spotlight-size) * 0.5) calc(var(--spotlight-size) * 0.5) at
       calc(var(--x, 0) * 1px) calc(var(--y, 0) * 1px),
-      hsl(0 100% 100% / 0.2), transparent 100%
+      hsl(0 100% 100% / 0.25), transparent 100%
     );
   }
   [data-glow] [data-glow] {
@@ -87,46 +87,44 @@ export const GlowCard = forwardRef(function GlowCard(
     else if (forwardedRef) forwardedRef.current = el;
   };
 
-  // Dùng properties riêng lẻ như original — KHÔNG dùng background shorthand
-  const glowStyles = {
-    "--base": base,
-    "--spread": spread,
-    "--radius": "16",
-    "--border": "2",
-    "--backdrop": "rgba(8, 18, 45, 0.75)",
-    "--backup-border": "rgba(0, 212, 255, 0.2)",
-    "--size": "300",
-    "--outer": "1",
-    "--border-size": "calc(var(--border, 2) * 1px)",
-    "--spotlight-size": "calc(var(--size, 300) * 1px)",
-    "--hue": "calc(var(--base) + (var(--xp, 0) * var(--spread, 0)))",
-    backgroundImage: `radial-gradient(
-      var(--spotlight-size) var(--spotlight-size) at
-      calc(var(--x, 0) * 1px)
-      calc(var(--y, 0) * 1px),
-      hsl(var(--hue, 192) 100% 70% / 0.12), transparent
-    )`,
-    backgroundColor: "var(--backdrop)",
-    backgroundSize: "calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)))",
-    backgroundPosition: "50% 50%",
-    backgroundAttachment: "fixed",
-    border: "var(--border-size) solid var(--backup-border)",
-    borderRadius: "16px",
-    backdropFilter: "blur(12px)",
-    WebkitBackdropFilter: "blur(12px)",
-    position: "relative",
-    touchAction: "none",
-  };
-
   return (
     <>
-      {/* dangerouslySetInnerHTML đảm bảo styles có ngay từ lần render đầu */}
       <style dangerouslySetInnerHTML={{ __html: GLOW_STYLES }} />
       <div
         ref={setRef}
         data-glow
         className={className}
-        style={{ ...glowStyles, ...style }}
+        style={{
+          "--base": base,
+          "--spread": spread,
+          "--radius": "16",
+          "--border": "2",
+          "--backdrop": "rgba(8, 18, 45, 0.75)",
+          "--backup-border": "rgba(0, 212, 255, 0.2)",
+          "--size": "280",
+          "--outer": "1",
+          "--border-size": "calc(var(--border, 2) * 1px)",
+          "--spotlight-size": "calc(var(--size, 280) * 1px)",
+          "--hue": "calc(var(--base) + (var(--xp, 0) * var(--spread, 0)))",
+
+          // Key fix: 100vw/100vh + position 0 0 → tọa độ khớp chính xác cursor
+          backgroundImage: `radial-gradient(
+            var(--spotlight-size) var(--spotlight-size) at
+            calc(var(--x, 0) * 1px) calc(var(--y, 0) * 1px),
+            hsl(var(--hue, 192) 100% 70% / 0.13), transparent
+          )`,
+          backgroundColor: "var(--backdrop)",
+          backgroundSize: "100vw 100vh",
+          backgroundPosition: "0 0",
+          backgroundAttachment: "fixed",
+          border: "var(--border-size) solid var(--backup-border)",
+          borderRadius: "16px",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          position: "relative",
+          touchAction: "none",
+          ...style,
+        }}
       >
         <div data-glow />
         {children}
