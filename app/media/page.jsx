@@ -35,19 +35,23 @@ export default function MediaPage() {
             DỊCH VỤ PREMIUM
           </div>
 
+          {/* GIẢI=white, PHÁP=cyan, HÌNH=white, ẢNH=cyan */}
           <div style={{ marginBottom: "0.3rem" }}>
             <RevealText
               text="GIẢI PHÁP HÌNH ẢNH"
               letterDelay={0.05}
               overlayDelay={0.04}
+              wordColors={["white", "cyan", "white", "cyan"]}
             />
           </div>
 
+          {/* BẤT=white, ĐỘNG=cyan, SẢN=white, ĐIỆN=cyan, ẢNH=white */}
           <div style={{ marginBottom: "1.5rem" }}>
             <RevealText
               text="BẤT ĐỘNG SẢN ĐIỆN ẢNH"
               letterDelay={0.05}
               overlayDelay={0.04}
+              wordColors={["white", "cyan", "white", "cyan", "white"]}
             />
           </div>
 
