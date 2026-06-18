@@ -4,12 +4,12 @@ import { Menu, X, Phone } from "lucide-react";
 import styles from "./Navbar.module.css";
 
 const navLinks = [
-    { label: "Trang chủ",   href: "/"          },
-    { label: "Dịch vụ Ads", href: "/#features" },
-    { label: "Quy trình",   href: "/#process"  },
-    { label: "Bảng giá",    href: "/#pricing"  },
-    { label: "Media",        href: "/media"     },
-    { label: "Liên hệ",     href: "/#contact"  },
+    { label: "Trang chủ",       href: "/"          },
+    { label: "Dịch vụ Ads",     href: "/#features" },
+    { label: "Media Quay Dựng", href: "/media"     },
+    { label: "Bảng giá",        href: "/#pricing"  },
+    { label: "Quy trình",       href: "/#process"  },
+    { label: "Liên hệ",         href: "/#contact"  },
 ];
 
 export default function Navbar() {
@@ -49,28 +49,19 @@ export default function Navbar() {
                     </li>
                 </ul>
 
-                {/* Nhóm phải: SĐT + Zalo + CTA */}
                 <div className={styles.rightGroup}>
                     <a href="tel:0943510685" className={styles.phoneDesktop}>
                         <Phone size={15} strokeWidth={2} />
                         0943 510 685
                     </a>
-
-                    <a
-                        href="https://zalo.me/0943510685"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.zaloBtn}
-                    >
+                    <a href="https://zalo.me/0943510685" target="_blank" rel="noopener noreferrer" className={styles.zaloBtn}>
                         Zalo
                     </a>
-
                     <a href="#contact" className={`btn btn-primary ${styles.ctaDesktop}`}>
                         Tư vấn ngay
                     </a>
                 </div>
 
-                {/* SĐT + Zalo trên mobile */}
                 <div className={styles.mobileContact}>
                     <a href="tel:0943510685" className={styles.phoneDesktop}>
                         <Phone size={14} strokeWidth={2} />
