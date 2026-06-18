@@ -1,67 +1,141 @@
+/* ─── Vertical Timeline ─── */
 .timeline {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+  position: relative;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 8px 0;
 }
 
-.step {
-    padding: 32px 24px;
-    position: relative;
-    overflow: hidden;
-    animation: slide-up 0.8s ease-out both;
+/* Đường kẻ dọc trung tâm */
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 212, 255, 0.5) 8%,
+    rgba(0, 212, 255, 0.5) 92%,
+    transparent 100%
+  );
+  z-index: 0;
 }
 
-.num {
-    position: absolute;
-    top: 16px;
-    right: 20px;
-    font-size: 3rem;
-    font-weight: 900;
-    color: rgba(0, 212, 255, 0.06);
-    line-height: 1;
-    letter-spacing: -0.05em;
+/* Mỗi row = card + dot + spacer (3 cột) */
+.row {
+  display: grid;
+  grid-template-columns: 1fr 48px 1fr;
+  align-items: center;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.rowLeft  .card      { grid-column: 1; grid-row: 1; }
+.rowLeft  .connector { grid-column: 2; grid-row: 1; }
+.rowLeft  .spacer    { grid-column: 3; grid-row: 1; }
+
+.rowRight .spacer    { grid-column: 1; grid-row: 1; }
+.rowRight .connector { grid-column: 2; grid-row: 1; }
+.rowRight .card      { grid-column: 3; grid-row: 1; }
+
+/* Card */
+.card {
+  padding: 24px 22px;
+  position: relative;
+  z-index: 1;
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
 }
 
 .iconWrap {
-    width: 48px;
-    height: 48px;
-    border-radius: var(--radius-sm);
-    background: var(--accent-cyan-dim);
-    border: 1px solid rgba(0, 212, 255, 0.12);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--accent-cyan);
-    margin-bottom: 20px;
-    transition: all 0.3s ease;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(0, 212, 255, 0.12);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-cyan);
 }
 
-.step:hover .iconWrap {
-    box-shadow: 0 0 20px rgba(0, 212, 255, 0.25);
+.num {
+  font-size: 2rem;
+  font-weight: 800;
+  color: rgba(0, 212, 255, 0.15);
+  line-height: 1;
 }
 
 .stepTitle {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 10px;
-    letter-spacing: -0.01em;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  line-height: 1.4;
 }
 
 .stepDesc {
-    font-size: 0.88rem;
-    color: var(--text-secondary);
-    line-height: 1.7;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
 }
 
-@media (max-width: 1024px) {
-    .timeline {
-        grid-template-columns: repeat(2, 1fr);
-    }
+/* Dot nối trên đường kẻ */
+.connector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  position: relative;
 }
 
-@media (max-width: 600px) {
-    .timeline {
-        grid-template-columns: 1fr;
-        gap: 16px;
-    }
+.dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent-cyan, #00d4ff);
+  border: 3px solid #080f20;
+  box-shadow:
+    0 0 0 3px rgba(0, 212, 255, 0.2),
+    0 0 16px rgba(0, 212, 255, 0.55);
+  flex-shrink: 0;
+}
+
+.spacer { /* placeholder giữ đối xứng */ }
+
+/* ─── Responsive ─── */
+@media (max-width: 700px) {
+  .timeline::before { left: 20px; }
+
+  .row,
+  .rowLeft,
+  .rowRight {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .rowLeft .spacer,
+  .rowRight .spacer { display: none; }
+
+  .rowLeft .connector,
+  .rowRight .connector {
+    order: -1;
+    padding-top: 22px;
+    flex-shrink: 0;
+  }
+
+  .rowLeft .card,
+  .rowRight .card { flex: 1; }
 }
