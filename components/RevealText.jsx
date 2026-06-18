@@ -2,19 +2,6 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
-const BDS_IMAGES = [
-  "https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1582407947304-fd86f28f1977?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?auto=format&fit=crop&w=800&q=80",
-];
-
-const CYAN_GRADIENT = "linear-gradient(135deg, #00d4ff 0%, #0077b6 100%)";
-
 export function RevealText({
   text = "STUNNING",
   fontSize = "clamp(2.2rem, 5.5vw, 4rem)",
@@ -22,15 +9,11 @@ export function RevealText({
   overlayDelay = 0.04,
   overlayDuration = 0.4,
   springDuration = 600,
-  images = BDS_IMAGES,
-  // wordColors: array theo thứ tự từng từ, "white" hoặc "cyan"
-  // VD: ["white", "cyan", "white", "cyan"]
   wordColors = [],
 }) {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [showOverlay, setShowOverlay] = useState(false);
 
-  // Map mỗi char → word index
   const chars = [];
   let wordIdx = 0;
   let letterIdx = 0;
@@ -68,16 +51,9 @@ export function RevealText({
 
         const color = wordColors[wIdx] || "cyan";
         const isWhite = color === "white";
-        const imgUrl = images[lIdx % images.length];
 
-        const baseStyle = isWhite
-          ? { color: "#ffffff", WebkitTextFillColor: "#ffffff" }
-          : {
-              background: CYAN_GRADIENT,
-              WebkitBackgroundClip: "text",
-              backgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            };
+        // Dùng solid color — tránh hoàn toàn WebkitBackgroundClip trên absolute element
+        const baseColor = isWhite ? "#ffffff" : "#00c8e8";
 
         return (
           <motion.span
@@ -90,7 +66,6 @@ export function RevealText({
               letterSpacing: "-0.02em",
               cursor: "pointer",
               position: "relative",
-              overflow: "hidden",
               display: "inline-block",
             }}
             initial={{ scale: 0, opacity: 0 }}
@@ -103,37 +78,43 @@ export function RevealText({
               mass: 0.8,
             }}
           >
-            {/* Base layer — absolute */}
+            {/* Spacer invisible giữ kích thước */}
+            <span style={{ visibility: "hidden", userSelect: "none", display: "block" }}>
+              {char}
+            </span>
+
+            {/* Base layer — solid color, không dùng backgroundClip */}
             <motion.span
               style={{
                 position: "absolute",
                 top: 0, left: 0, right: 0, bottom: 0,
-                ...baseStyle,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: baseColor,
+                WebkitTextFillColor: baseColor,
               }}
               animate={{ opacity: hoveredIndex === lIdx ? 0 : 1 }}
-              transition={{ duration: 0.1 }}
+              transition={{ duration: 0.15 }}
             >
               {char}
             </motion.span>
 
-            {/* Image layer on hover — natural flow */}
+            {/* Hover layer — trắng sáng + glow */}
             <motion.span
               style={{
-                display: "block",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundImage: `url('${imgUrl}')`,
-                backgroundSize: "cover",
-                backgroundRepeat: "no-repeat",
+                position: "absolute",
+                top: 0, left: 0, right: 0, bottom: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#ffffff",
+                WebkitTextFillColor: "#ffffff",
+                textShadow: "0 0 20px rgba(0, 212, 255, 0.9), 0 0 40px rgba(0, 212, 255, 0.5)",
+                pointerEvents: "none",
               }}
-              animate={{
-                opacity: hoveredIndex === lIdx ? 1 : 0,
-                backgroundPosition: hoveredIndex === lIdx ? "20% center" : "0% center",
-              }}
-              transition={{
-                opacity: { duration: 0.15 },
-                backgroundPosition: { duration: 3, ease: "easeInOut" },
-              }}
+              animate={{ opacity: hoveredIndex === lIdx ? 1 : 0 }}
+              transition={{ duration: 0.15 }}
             >
               {char}
             </motion.span>
@@ -144,10 +125,11 @@ export function RevealText({
                 style={{
                   position: "absolute",
                   top: 0, left: 0, right: 0, bottom: 0,
-                  background: CYAN_GRADIENT,
-                  WebkitBackgroundClip: "text",
-                  backgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#00c8e8",
+                  WebkitTextFillColor: "#00c8e8",
                   pointerEvents: "none",
                 }}
                 initial={{ opacity: 0 }}
