@@ -13,6 +13,8 @@ const BDS_IMAGES = [
   "https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?auto=format&fit=crop&w=800&q=80",
 ];
 
+const CYAN_GRADIENT = "linear-gradient(135deg, #00d4ff 0%, #0077b6 100%)";
+
 export function RevealText({
   text = "STUNNING",
   fontSize = "clamp(2.2rem, 5.5vw, 4rem)",
@@ -21,24 +23,35 @@ export function RevealText({
   overlayDuration = 0.4,
   springDuration = 600,
   images = BDS_IMAGES,
+  // wordColors: array theo thứ tự từng từ, "white" hoặc "cyan"
+  // VD: ["white", "cyan", "white", "cyan"]
+  wordColors = [],
 }) {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [showOverlay, setShowOverlay] = useState(false);
 
-  // Pre-compute letter metadata
-  const letters = text.split("").map((char, i) => ({
-    char,
-    index: i,
-    letterIdx: text.slice(0, i).replace(/ /g, "").length,
-    isSpace: char === " ",
-  }));
+  // Map mỗi char → word index
+  const chars = [];
+  let wordIdx = 0;
+  let letterIdx = 0;
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    if (char === " ") {
+      chars.push({ char, isSpace: true, wordIdx: -1, letterIdx: -1 });
+      wordIdx++;
+    } else {
+      chars.push({ char, isSpace: false, wordIdx, letterIdx });
+      letterIdx++;
+    }
+  }
+
+  const totalLetters = letterIdx;
 
   useEffect(() => {
-    const letterCount = text.replace(/ /g, "").length;
-    const totalDelay = ((letterCount - 1) * letterDelay * 1000) + springDuration;
+    const totalDelay = ((totalLetters - 1) * letterDelay * 1000) + springDuration;
     const timer = setTimeout(() => setShowOverlay(true), totalDelay);
     return () => clearTimeout(timer);
-  }, [text, letterDelay, springDuration]);
+  }, [totalLetters, letterDelay, springDuration]);
 
   return (
     <div style={{
@@ -48,19 +61,28 @@ export function RevealText({
       flexWrap: "wrap",
       lineHeight: 1.15,
     }}>
-      {letters.map(({ char, index, letterIdx, isSpace }) => {
+      {chars.map(({ char, isSpace, wordIdx: wIdx, letterIdx: lIdx }, i) => {
         if (isSpace) {
-          return (
-            <span key={index} style={{ display: "inline-block", width: "0.35em" }} />
-          );
+          return <span key={i} style={{ display: "inline-block", width: "0.35em" }} />;
         }
 
-        const imgUrl = images[letterIdx % images.length];
+        const color = wordColors[wIdx] || "cyan";
+        const isWhite = color === "white";
+        const imgUrl = images[lIdx % images.length];
+
+        const baseStyle = isWhite
+          ? { color: "#ffffff", WebkitTextFillColor: "#ffffff" }
+          : {
+              background: CYAN_GRADIENT,
+              WebkitBackgroundClip: "text",
+              backgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            };
 
         return (
           <motion.span
-            key={index}
-            onMouseEnter={() => setHoveredIndex(letterIdx)}
+            key={i}
+            onMouseEnter={() => setHoveredIndex(lIdx)}
             onMouseLeave={() => setHoveredIndex(null)}
             style={{
               fontSize,
@@ -74,30 +96,27 @@ export function RevealText({
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{
-              delay: letterIdx * letterDelay,
+              delay: lIdx * letterDelay,
               type: "spring",
               damping: 8,
               stiffness: 200,
               mass: 0.8,
             }}
           >
-            {/* Base layer — gradient cyan, absolute */}
+            {/* Base layer — absolute */}
             <motion.span
               style={{
                 position: "absolute",
                 top: 0, left: 0, right: 0, bottom: 0,
-                background: "linear-gradient(135deg, #00d4ff 0%, #0077b6 100%)",
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                WebkitTextFillColor: "transparent",
+                ...baseStyle,
               }}
-              animate={{ opacity: hoveredIndex === letterIdx ? 0 : 1 }}
+              animate={{ opacity: hoveredIndex === lIdx ? 0 : 1 }}
               transition={{ duration: 0.1 }}
             >
               {char}
             </motion.span>
 
-            {/* Image layer on hover — natural flow, gives parent size */}
+            {/* Image layer on hover — natural flow */}
             <motion.span
               style={{
                 display: "block",
@@ -108,8 +127,8 @@ export function RevealText({
                 backgroundRepeat: "no-repeat",
               }}
               animate={{
-                opacity: hoveredIndex === letterIdx ? 1 : 0,
-                backgroundPosition: hoveredIndex === letterIdx ? "20% center" : "0% center",
+                opacity: hoveredIndex === lIdx ? 1 : 0,
+                backgroundPosition: hoveredIndex === lIdx ? "20% center" : "0% center",
               }}
               transition={{
                 opacity: { duration: 0.15 },
@@ -119,13 +138,13 @@ export function RevealText({
               {char}
             </motion.span>
 
-            {/* Overlay sweep sau khi animate xong */}
+            {/* Overlay sweep */}
             {showOverlay && (
               <motion.span
                 style={{
                   position: "absolute",
                   top: 0, left: 0, right: 0, bottom: 0,
-                  background: "linear-gradient(135deg, #00d4ff 0%, #0077b6 100%)",
+                  background: CYAN_GRADIENT,
                   WebkitBackgroundClip: "text",
                   backgroundClip: "text",
                   WebkitTextFillColor: "transparent",
@@ -134,7 +153,7 @@ export function RevealText({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: [0, 1, 1, 0] }}
                 transition={{
-                  delay: letterIdx * overlayDelay,
+                  delay: lIdx * overlayDelay,
                   duration: overlayDuration,
                   times: [0, 0.1, 0.7, 1],
                   ease: "easeInOut",
