@@ -25,7 +25,7 @@ const PLANS = [
   {
     name: "Quay Dựng Theo Buổi",
     sub: "Sale review / Chụp VP / Dự án lẻ",
-    price: "Từ 3Tr",
+    price: "Từ 3 Triệu",
     highlight: false,
     badge: null,
     features: [
@@ -40,7 +40,7 @@ const PLANS = [
   {
     name: "Gói 10 Video",
     sub: "Tối ưu chi phí chạy chiến dịch",
-    price: "20Tr",
+    price: "20 Triệu",
     unit: "/ Gói",
     highlight: true,
     badge: "Chiến Dịch Ngắn",
@@ -56,7 +56,7 @@ const PLANS = [
   {
     name: "Cày Phẫu 30 Video",
     sub: "Xây Kênh Trọn Gói / Phủ Sóng Mạng XH",
-    price: "45Tr",
+    price: "45 Triệu",
     unit: "/ Tháng",
     highlight: true,
     badge: "Best Seller",
@@ -87,7 +87,7 @@ export default function MediaPricing() {
           {PLANS.map((plan, i) => (
             <div
               key={i}
-              className={`glass-card ${styles.card} ${plan.highlight ? styles.highlighted : ""}`}
+              className={`${styles.card} ${plan.highlight ? styles.highlighted : ""}`}
             >
               {plan.badge && (
                 <span className={styles.badge}>{plan.badge}</span>
