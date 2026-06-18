@@ -1,6 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import ParticlesBackground from "@/components/ui/particles-bg";
+import ParticlesBackground from "@/components/particles-bg";
 import MediaServices from "@/components/MediaServices";
 import MediaEquipment from "@/components/MediaEquipment";
 import MediaPricing from "@/components/MediaPricing";
@@ -37,8 +37,6 @@ export default function MediaPage() {
         <MediaServices />
         <MediaEquipment />
         <MediaPricing />
-
-        {/* Form — dùng MediaContact có submit handler đầy đủ */}
         <MediaContact />
 
       </main>
