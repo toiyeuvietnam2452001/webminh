@@ -105,21 +105,17 @@
 
 .price {
   font-size: 1.8rem;
-  font-weight: 800;
-  background: var(--accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-weight: 900;
+  color: #003399;
   line-height: 1.1;
+  -webkit-text-fill-color: #003399;
 }
 
 .unit {
   font-size: 1rem;
-  font-weight: 600;
-  background: var(--accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-weight: 700;
+  color: #0055bb;
+  -webkit-text-fill-color: #0055bb;
 }
 
 .features {
