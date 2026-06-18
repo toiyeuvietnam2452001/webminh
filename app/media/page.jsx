@@ -5,6 +5,7 @@ import MediaServices from "@/components/MediaServices";
 import MediaEquipment from "@/components/MediaEquipment";
 import MediaPricing from "@/components/MediaPricing";
 import MediaContact from "@/components/MediaContact";
+import { RevealText } from "@/components/RevealText";
 
 export const metadata = {
   title: "Dịch Vụ Quay Dựng Media BĐS | Hình Ảnh Chuyên Nghiệp",
@@ -20,16 +21,41 @@ export default function MediaPage() {
 
         {/* Hero */}
         <section style={{ textAlign: "center", padding: "6rem 1.5rem 4rem" }}>
-          <div style={{ display: "inline-block", background: "var(--accent-cyan-dim)", color: "var(--accent-cyan)", padding: "0.5rem 1rem", borderRadius: "50px", fontSize: "0.9rem", fontWeight: 700, marginBottom: "2rem", border: "1px solid var(--border-glow)" }}>
+          <div style={{
+            display: "inline-block",
+            background: "var(--accent-cyan-dim)",
+            color: "var(--accent-cyan)",
+            padding: "0.5rem 1rem",
+            borderRadius: "50px",
+            fontSize: "0.9rem",
+            fontWeight: 700,
+            marginBottom: "2rem",
+            border: "1px solid var(--border-glow)",
+          }}>
             DỊCH VỤ PREMIUM
           </div>
-          <h1 style={{ fontSize: "clamp(2.5rem, 6vw, 4rem)", fontWeight: 900, color: "var(--text-primary)", marginBottom: "1.5rem", lineHeight: 1.2 }}>
-            Giải Pháp Hình Ảnh<br />
-            <span style={{ background: "var(--accent-gradient)", WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              Bất Động Sản Điện Ảnh
-            </span>
+
+          <h1 style={{
+            fontSize: "clamp(2.2rem, 5.5vw, 3.8rem)",
+            fontWeight: 900,
+            color: "var(--text-primary)",
+            marginBottom: "0.5rem",
+            lineHeight: 1.2,
+          }}>
+            GIẢI PHÁP HÌNH ẢNH
           </h1>
-          <p style={{ maxWidth: "700px", margin: "0 auto", fontSize: "1.15rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
+
+          <div style={{ marginBottom: "1.5rem" }}>
+            <RevealText text="BẤT ĐỘNG SẢN ĐIỆN ẢNH" />
+          </div>
+
+          <p style={{
+            maxWidth: "700px",
+            margin: "0 auto",
+            fontSize: "1.15rem",
+            color: "var(--text-secondary)",
+            lineHeight: 1.6,
+          }}>
             Hơn cả một thước phim, chúng tôi kiến tạo "Vũ khí Sale" truyền tải trọn vẹn quy mô dự án, thúc đẩy cảm xúc và chốt Deal bùng nổ.
           </p>
         </section>
