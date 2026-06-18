@@ -2,15 +2,16 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
+// Index 5 bị lỗi load — thay bằng ảnh khác đã verified
 const BDS_IMAGES = [
-  "https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1582407947304-fd86f28f1977?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+  "https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+  "https://images.unsplash.com/photo-1518837695005-2083093ee35b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+  "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+  "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+  "https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+  "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+  "https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
 ];
 
 export function RevealText({
@@ -26,7 +27,6 @@ export function RevealText({
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [showOverlay, setShowOverlay] = useState(false);
 
-  // Build char list với word index và letter index
   const chars = [];
   let wordIdx = 0;
   let letterIdx = 0;
@@ -64,6 +64,7 @@ export function RevealText({
         const color = wordColors[wIdx] || "cyan";
         const baseColor = color === "white" ? "#ffffff" : "#00c8e8";
         const imgUrl = images[lIdx % images.length];
+        const isHovered = hoveredIndex === lIdx;
 
         return (
           <motion.span
@@ -76,7 +77,6 @@ export function RevealText({
               letterSpacing: "-0.02em",
               cursor: "pointer",
               position: "relative",
-              overflow: "hidden",
               display: "inline-block",
               lineHeight: 1.2,
             }}
@@ -90,59 +90,54 @@ export function RevealText({
               mass: 0.8,
             }}
           >
-            {/* BASE TEXT LAYER — absolute, màu chữ bình thường */}
-            <motion.span
+            {/* IMAGE LAYER — opacity:1 luôn, không animate → không bao giờ mất chữ */}
+            <span
               style={{
-                position: "absolute",
-                inset: 0,
-                color: baseColor,
-                WebkitTextFillColor: baseColor,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              animate={{ opacity: hoveredIndex === lIdx ? 0 : 1 }}
-              transition={{ duration: 0.1 }}
-            >
-              {char}
-            </motion.span>
-
-            {/* IMAGE TEXT LAYER — natural flow (sizing), hiện khi hover */}
-            <motion.span
-              style={{
+                display: "block",
                 WebkitBackgroundClip: "text",
                 backgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundImage: `url('${imgUrl}')`,
                 backgroundSize: "cover",
                 backgroundRepeat: "no-repeat",
-                display: "block",
+                backgroundPosition: isHovered ? "10% center" : "0% center",
+                transition: "background-position 3s ease-in-out",
+                userSelect: "none",
               }}
-              animate={{
-                opacity: hoveredIndex === lIdx ? 1 : 0,
-                backgroundPosition:
-                  hoveredIndex === lIdx ? "10% center" : "0% center",
+            >
+              {char}
+            </span>
+
+            {/* BASE LAYER — phủ lên image, fade out khi hover */}
+            <motion.span
+              style={{
+                position: "absolute",
+                top: 0, left: 0, right: 0, bottom: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: baseColor,
+                WebkitTextFillColor: baseColor,
+                pointerEvents: "none",
               }}
-              transition={{
-                opacity: { duration: 0.1 },
-                backgroundPosition: { duration: 3, ease: "easeInOut" },
-              }}
+              animate={{ opacity: isHovered ? 0 : 1 }}
+              transition={{ duration: 0.15 }}
             >
               {char}
             </motion.span>
 
-            {/* OVERLAY SWEEP — chạy 1 lần sau khi animation vào xong */}
+            {/* OVERLAY SWEEP */}
             {showOverlay && (
               <motion.span
                 style={{
                   position: "absolute",
-                  inset: 0,
-                  color: "#00c8e8",
-                  WebkitTextFillColor: "#00c8e8",
-                  pointerEvents: "none",
+                  top: 0, left: 0, right: 0, bottom: 0,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  color: "#00c8e8",
+                  WebkitTextFillColor: "#00c8e8",
+                  pointerEvents: "none",
                 }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: [0, 1, 1, 0] }}
