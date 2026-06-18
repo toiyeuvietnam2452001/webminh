@@ -1,10 +1,10 @@
-import Navbar        from "@/components/Navbar";
-import Footer        from "@/components/Footer";
-import SmokeBackground from "@/components/SmokeBackground";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import ParticlesBackground from "@/components/ui/particles-bg";
 import MediaServices from "@/components/MediaServices";
 import MediaEquipment from "@/components/MediaEquipment";
-import MediaPricing  from "@/components/MediaPricing";
-import MediaContact  from "@/components/MediaContact";
+import MediaPricing from "@/components/MediaPricing";
+import MediaContact from "@/components/MediaContact";
 
 export const metadata = {
   title: "Dịch Vụ Quay Dựng Media BĐS | Hình Ảnh Chuyên Nghiệp",
@@ -14,7 +14,7 @@ export const metadata = {
 export default function MediaPage() {
   return (
     <>
-      <SmokeBackground color="#0044cc" />
+      <ParticlesBackground />
       <Navbar />
       <main style={{ paddingTop: "80px", position: "relative", zIndex: 10 }}>
 
