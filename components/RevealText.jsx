@@ -26,6 +26,7 @@ export function RevealText({
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [showOverlay, setShowOverlay] = useState(false);
 
+  // Build char list với word index và letter index
   const chars = [];
   let wordIdx = 0;
   let letterIdx = 0;
@@ -54,16 +55,14 @@ export function RevealText({
       alignItems: "center",
       justifyContent: "center",
       flexWrap: "wrap",
-      lineHeight: 1.15,
     }}>
       {chars.map(({ char, isSpace, wordIdx: wIdx, letterIdx: lIdx }, i) => {
         if (isSpace) {
-          return <span key={i} style={{ display: "inline-block", width: "0.35em" }} />;
+          return <span key={i} style={{ display: "inline-block", width: "0.3em" }} />;
         }
 
         const color = wordColors[wIdx] || "cyan";
-        const isWhite = color === "white";
-        const baseColor = isWhite ? "#ffffff" : "#00c8e8";
+        const baseColor = color === "white" ? "#ffffff" : "#00c8e8";
         const imgUrl = images[lIdx % images.length];
 
         return (
@@ -77,8 +76,9 @@ export function RevealText({
               letterSpacing: "-0.02em",
               cursor: "pointer",
               position: "relative",
-              display: "inline-block",
               overflow: "hidden",
+              display: "inline-block",
+              lineHeight: 1.2,
             }}
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -90,72 +90,59 @@ export function RevealText({
               mass: 0.8,
             }}
           >
-            {/* IMAGE LAYER — luôn opacity:1, không animate
-                Đây là layer nền, base layer phủ lên trên
-                Khi base layer mờ đi → lộ ảnh ra */}
-            <span
+            {/* BASE TEXT LAYER — absolute, màu chữ bình thường */}
+            <motion.span
               style={{
-                display: "block",
+                position: "absolute",
+                inset: 0,
+                color: baseColor,
+                WebkitTextFillColor: baseColor,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              animate={{ opacity: hoveredIndex === lIdx ? 0 : 1 }}
+              transition={{ duration: 0.1 }}
+            >
+              {char}
+            </motion.span>
+
+            {/* IMAGE TEXT LAYER — natural flow (sizing), hiện khi hover */}
+            <motion.span
+              style={{
                 WebkitBackgroundClip: "text",
                 backgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundImage: `url('${imgUrl}')`,
                 backgroundSize: "cover",
                 backgroundRepeat: "no-repeat",
-                backgroundPosition: "center",
+                display: "block",
               }}
-            >
-              {char}
-            </span>
-
-            {/* BASE LAYER — phủ lên image, fade out khi hover */}
-            <motion.span
-              style={{
-                position: "absolute",
-                top: 0, left: 0, right: 0, bottom: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: baseColor,
-                WebkitTextFillColor: baseColor,
+              animate={{
+                opacity: hoveredIndex === lIdx ? 1 : 0,
+                backgroundPosition:
+                  hoveredIndex === lIdx ? "10% center" : "0% center",
               }}
-              animate={{ opacity: hoveredIndex === lIdx ? 0 : 1 }}
-              transition={{ duration: 0.2 }}
+              transition={{
+                opacity: { duration: 0.1 },
+                backgroundPosition: { duration: 3, ease: "easeInOut" },
+              }}
             >
               {char}
             </motion.span>
 
-            {/* GLOW LAYER — hiện nhẹ khi hover để boost */}
-            <motion.span
-              style={{
-                position: "absolute",
-                top: 0, left: 0, right: 0, bottom: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#ffffff",
-                WebkitTextFillColor: "#ffffff",
-                textShadow: "0 0 24px rgba(0,212,255,0.95)",
-                pointerEvents: "none",
-              }}
-              animate={{ opacity: hoveredIndex === lIdx ? 0.35 : 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              {char}
-            </motion.span>
-
-            {/* OVERLAY SWEEP */}
+            {/* OVERLAY SWEEP — chạy 1 lần sau khi animation vào xong */}
             {showOverlay && (
               <motion.span
                 style={{
                   position: "absolute",
-                  top: 0, left: 0, right: 0, bottom: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  inset: 0,
                   color: "#00c8e8",
                   WebkitTextFillColor: "#00c8e8",
                   pointerEvents: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: [0, 1, 1, 0] }}
