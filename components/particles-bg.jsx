@@ -36,7 +36,7 @@ export default function ParticlesBackground() {
         move: { enable: true, speed: 2, random: true, out_mode: "bounce" },
       },
       interactivity: {
-        detect_on: "canvas",
+        detect_on: "window",
         events: {
           onhover: { enable: true, mode: "grab" },
           onclick: { enable: true, mode: "push" },
@@ -45,6 +45,7 @@ export default function ParticlesBackground() {
         modes: {
           grab: { distance: 220, line_linked: { opacity: 0.8 } },
           push: { particles_nb: 4 },
+          repulse: { distance: 180, duration: 0.4 },
         },
       },
       retina_detect: true,
