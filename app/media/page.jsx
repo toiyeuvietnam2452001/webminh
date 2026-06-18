@@ -35,18 +35,20 @@ export default function MediaPage() {
             DỊCH VỤ PREMIUM
           </div>
 
-          <h1 style={{
-            fontSize: "clamp(2.2rem, 5.5vw, 3.8rem)",
-            fontWeight: 900,
-            color: "var(--text-primary)",
-            marginBottom: "0.5rem",
-            lineHeight: 1.2,
-          }}>
-            GIẢI PHÁP HÌNH ẢNH
-          </h1>
+          <div style={{ marginBottom: "0.3rem" }}>
+            <RevealText
+              text="GIẢI PHÁP HÌNH ẢNH"
+              letterDelay={0.05}
+              overlayDelay={0.04}
+            />
+          </div>
 
           <div style={{ marginBottom: "1.5rem" }}>
-            <RevealText text="BẤT ĐỘNG SẢN ĐIỆN ẢNH" />
+            <RevealText
+              text="BẤT ĐỘNG SẢN ĐIỆN ẢNH"
+              letterDelay={0.05}
+              overlayDelay={0.04}
+            />
           </div>
 
           <p style={{
