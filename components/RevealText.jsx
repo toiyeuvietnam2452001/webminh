@@ -2,6 +2,17 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
+const BDS_IMAGES = [
+  "https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1582407947304-fd86f28f1977?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?auto=format&fit=crop&w=800&q=80",
+];
+
 export function RevealText({
   text = "STUNNING",
   fontSize = "clamp(2.2rem, 5.5vw, 4rem)",
@@ -9,6 +20,7 @@ export function RevealText({
   overlayDelay = 0.04,
   overlayDuration = 0.4,
   springDuration = 600,
+  images = BDS_IMAGES,
   wordColors = [],
 }) {
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -51,9 +63,8 @@ export function RevealText({
 
         const color = wordColors[wIdx] || "cyan";
         const isWhite = color === "white";
-
-        // Dùng solid color — tránh hoàn toàn WebkitBackgroundClip trên absolute element
         const baseColor = isWhite ? "#ffffff" : "#00c8e8";
+        const imgUrl = images[lIdx % images.length];
 
         return (
           <motion.span
@@ -67,6 +78,7 @@ export function RevealText({
               cursor: "pointer",
               position: "relative",
               display: "inline-block",
+              overflow: "hidden",
             }}
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -78,12 +90,25 @@ export function RevealText({
               mass: 0.8,
             }}
           >
-            {/* Spacer invisible giữ kích thước */}
-            <span style={{ visibility: "hidden", userSelect: "none", display: "block" }}>
+            {/* IMAGE LAYER — luôn opacity:1, không animate
+                Đây là layer nền, base layer phủ lên trên
+                Khi base layer mờ đi → lộ ảnh ra */}
+            <span
+              style={{
+                display: "block",
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundImage: `url('${imgUrl}')`,
+                backgroundSize: "cover",
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+              }}
+            >
               {char}
             </span>
 
-            {/* Base layer — solid color, không dùng backgroundClip */}
+            {/* BASE LAYER — phủ lên image, fade out khi hover */}
             <motion.span
               style={{
                 position: "absolute",
@@ -95,12 +120,12 @@ export function RevealText({
                 WebkitTextFillColor: baseColor,
               }}
               animate={{ opacity: hoveredIndex === lIdx ? 0 : 1 }}
-              transition={{ duration: 0.15 }}
+              transition={{ duration: 0.2 }}
             >
               {char}
             </motion.span>
 
-            {/* Hover layer — trắng sáng + glow */}
+            {/* GLOW LAYER — hiện nhẹ khi hover để boost */}
             <motion.span
               style={{
                 position: "absolute",
@@ -110,16 +135,16 @@ export function RevealText({
                 justifyContent: "center",
                 color: "#ffffff",
                 WebkitTextFillColor: "#ffffff",
-                textShadow: "0 0 20px rgba(0, 212, 255, 0.9), 0 0 40px rgba(0, 212, 255, 0.5)",
+                textShadow: "0 0 24px rgba(0,212,255,0.95)",
                 pointerEvents: "none",
               }}
-              animate={{ opacity: hoveredIndex === lIdx ? 1 : 0 }}
-              transition={{ duration: 0.15 }}
+              animate={{ opacity: hoveredIndex === lIdx ? 0.35 : 0 }}
+              transition={{ duration: 0.2 }}
             >
               {char}
             </motion.span>
 
-            {/* Overlay sweep */}
+            {/* OVERLAY SWEEP */}
             {showOverlay && (
               <motion.span
                 style={{
