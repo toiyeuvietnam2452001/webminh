@@ -5,12 +5,12 @@ import Features from "@/components/Features";
 import HowItWorks from "@/components/HowItWorks";
 import Pricing from "@/components/Pricing";
 import Footer from "@/components/Footer";
-import ScrollBgManager from "@/components/ScrollBgManager";
+import AdaptiveBackground from "@/components/AdaptiveBackground";
 
 export default function Home() {
   return (
     <>
-      <ScrollBgManager />
+      <AdaptiveBackground />
       <Navbar />
       <main>
         <Hero />
