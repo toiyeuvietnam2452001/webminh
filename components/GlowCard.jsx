@@ -1,24 +1,35 @@
 "use client";
 import { useRef, forwardRef, useEffect } from "react";
 
-// CSS inject 1 lần — ::before dùng mask để chỉ hiện ở phần viền
 const GLOW_CSS = `
+  /* Đăng ký CSS custom property để animate góc quay */
+  @property --border-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  @keyframes glow-spin {
+    to { --border-angle: 360deg; }
+  }
+
   [data-glow-card] {
     isolation: isolate;
   }
+
+  /* ::before — vùng sáng spotlight theo cursor (static border glow) */
   [data-glow-card]::before {
     content: '';
     position: absolute;
-    inset: -1px;
+    inset: 0;
     border-radius: inherit;
-    padding: 1px;
+    padding: 1.5px;
     background: radial-gradient(
-      circle 220px at var(--mx, -500px) var(--my, -500px),
-      rgba(0, 212, 255, 0.95) 0%,
-      rgba(0, 212, 255, 0.3) 30%,
-      transparent 65%
+      circle 200px at var(--mx, -500px) var(--my, -500px),
+      rgba(0, 220, 255, 1.0)   0%,
+      rgba(0, 180, 255, 0.55) 30%,
+      transparent              65%
     );
-    /* Mask chỉ giữ lại vùng viền, ẩn phần bên trong */
     mask:
       linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
@@ -28,7 +39,45 @@ const GLOW_CSS = `
       linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     pointer-events: none;
-    z-index: 0;
+    z-index: 1;
+    filter: brightness(1.6);
+  }
+
+  /* ::after — viền chạy vòng khi hover */
+  [data-glow-card]::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    opacity: 0;
+    background: conic-gradient(
+      from var(--border-angle, 0deg),
+      transparent         0%,
+      rgba(0, 210, 255, 0.0)  5%,
+      rgba(0, 220, 255, 0.95) 18%,
+      rgba(180, 245, 255, 1)  24%,
+      rgba(0, 220, 255, 0.95) 30%,
+      rgba(0, 210, 255, 0.0)  42%,
+      transparent         100%
+    );
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+    z-index: 2;
+    transition: opacity 0.35s ease;
+    filter: brightness(1.4) drop-shadow(0 0 4px rgba(0,212,255,0.8));
+  }
+
+  [data-glow-card]:hover::after {
+    opacity: 1;
+    animation: glow-spin 2.2s linear infinite;
   }
 `;
 
@@ -38,7 +87,6 @@ export const GlowCard = forwardRef(function GlowCard(
 ) {
   const cardRef = useRef(null);
 
-  // Inject CSS 1 lần vào <head>
   useEffect(() => {
     if (!document.getElementById("glow-card-css")) {
       const tag = document.createElement("style");
@@ -79,13 +127,11 @@ export const GlowCard = forwardRef(function GlowCard(
       style={{
         position: "relative",
         borderRadius: "16px",
-        // Viền tĩnh mờ khi chuột chưa vào
         border: "1px solid rgba(0, 212, 255, 0.10)",
-        // Spotlight bên trong theo chuột
-        backgroundColor: "rgba(8, 18, 45, 0.82)",
+        backgroundColor: "rgba(6, 14, 40, 0.84)",
         backgroundImage: `radial-gradient(
-          circle 290px at var(--mx, -500px) var(--my, -500px),
-          rgba(0, 212, 255, 0.12),
+          circle 300px at var(--mx, -500px) var(--my, -500px),
+          rgba(0, 212, 255, 0.20),
           transparent 65%
         )`,
         backdropFilter: "blur(14px)",
