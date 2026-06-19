@@ -1,6 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import ParticlesBackground from "@/components/particles-bg";
+import AdaptiveMediaBG from "@/components/AdaptiveMediaBG";
 import MediaServices from "@/components/MediaServices";
 import MediaEquipment from "@/components/MediaEquipment";
 import MediaPricing from "@/components/MediaPricing";
@@ -15,7 +15,7 @@ export const metadata = {
 export default function MediaPage() {
   return (
     <>
-      <ParticlesBackground />
+      <AdaptiveMediaBG />
       <Navbar />
       <main style={{ paddingTop: "80px", position: "relative", zIndex: 10 }}>
 
@@ -35,7 +35,6 @@ export default function MediaPage() {
             DỊCH VỤ PREMIUM
           </div>
 
-          {/* GIẢI=white, PHÁP=cyan, HÌNH=white, ẢNH=cyan */}
           <div style={{ marginBottom: "0.3rem" }}>
             <RevealText
               text="GIẢI PHÁP HÌNH ẢNH"
@@ -45,7 +44,6 @@ export default function MediaPage() {
             />
           </div>
 
-          {/* BẤT=white, ĐỘNG=cyan, SẢN=white, ĐIỆN=cyan, ẢNH=white */}
           <div style={{ marginBottom: "1.5rem" }}>
             <RevealText
               text="BẤT ĐỘNG SẢN ĐIỆN ẢNH"
