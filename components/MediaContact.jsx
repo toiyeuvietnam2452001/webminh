@@ -102,7 +102,7 @@ export default function MediaContact() {
               className={styles.submit}
               disabled={status === "sending"}
             >
-              {status === "sending" ? "Đang gửi..." : "Nhận Bảng Báo Giá Media"}
+              {status === "sending" ? "Đang gửi..." : "Đăng Ký"}
             </button>
           )}
 
