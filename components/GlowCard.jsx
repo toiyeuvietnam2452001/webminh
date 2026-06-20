@@ -50,7 +50,7 @@ const GLOW_CSS = `
     inset: 0;
     border-radius: inherit;
     padding: 1.5px;
-    opacity: 0;
+    opacity: 0.8;
     background: conic-gradient(
       from var(--border-angle, 0deg),
       transparent         0%,
@@ -73,11 +73,12 @@ const GLOW_CSS = `
     z-index: 2;
     transition: opacity 0.35s ease;
     filter: brightness(1.4) drop-shadow(0 0 4px rgba(0,212,255,0.8));
+    animation: glow-spin 3.5s linear infinite;
   }
 
   [data-glow-card]:hover::after {
     opacity: 1;
-    animation: glow-spin 2.2s linear infinite;
+    filter: brightness(1.8) drop-shadow(0 0 6px rgba(0,212,255,1));
   }
 `;
 
