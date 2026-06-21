@@ -57,7 +57,6 @@ export default function Hero() {
               Performance Marketing Expert
             </div>
 
-            {/* ── Tiêu đề dạng particle hội tụ ── */}
             <VaporTitle />
 
             <p className={styles.subtitle}>
@@ -105,7 +104,6 @@ export default function Hero() {
                 className={styles.portrait}
               />
             </div>
-
           </div>
         </div>
 
@@ -133,8 +131,8 @@ export default function Hero() {
           </div>
           <div className={styles.divider} />
           <div className={styles.stat}>
-            <CountUp target={98} suffix="%" />
-            <span className={styles.statLabel}>Khách hàng hài lòng</span>
+            <CountUp target={94} suffix="%" />
+            <span className={styles.statLabel}>Đối tác có giao dịch</span>
           </div>
         </div>
       </div>
