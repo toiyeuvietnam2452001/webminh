@@ -126,7 +126,7 @@ export default function Hero() {
           </div>
           <div className={styles.divider} />
           <div className={styles.stat}>
-            <CountUp target={50} suffix="K+" />
+            <CountUp target={83} suffix="K+" />
             <span className={styles.statLabel}>Lead chất lượng</span>
           </div>
           <div className={styles.divider} />
