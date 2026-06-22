@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, CheckCircle } from "lucide-react";
 import Image from "next/image";
-import AnimatedShaderBG from "./AnimatedShaderBG";
+import AuroraShaderBG from "./AuroraShaderBG";
 
 /* ─── CountUp ─── */
 function CountUp({ target, suffix = "", duration = 1800 }) {
@@ -106,7 +106,7 @@ export default function AboutSection() {
 
         {/* Shader background */}
         <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
-          <AnimatedShaderBG />
+          <AuroraShaderBG />
         </div>
 
         {/* Overlay tối để text dễ đọc */}
