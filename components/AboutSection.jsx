@@ -67,65 +67,42 @@ function ProjectCard({ name, image }) {
 
 
 
-/* ── Typing Effect ── */
-function TypingParagraphs({ paragraphs, totalDuration = 6000 }) {
-  const ref = useRef(null);
-  const [charIndex, setCharIndex] = useState(0);
-  const [started, setStarted] = useState(false);
-  const totalChars = paragraphs.reduce((sum, p) => sum + p.length, 0);
-
-  // Start when scrolled into view
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) { setStarted(true); obs.disconnect(); }
-    }, { threshold: 0.3 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
-  // Run typing animation
-  useEffect(() => {
-    if (!started) return;
-    const msPerFrame = 16;
-    const charsPerFrame = Math.ceil(totalChars / (totalDuration / msPerFrame));
-    const interval = setInterval(() => {
-      setCharIndex(prev => {
-        const next = prev + charsPerFrame;
-        if (next >= totalChars) { clearInterval(interval); return totalChars; }
-        return next;
-      });
-    }, msPerFrame);
-    return () => clearInterval(interval);
-  }, [started]);
-
-  // Slice text based on charIndex
-  let remaining = charIndex;
-  const displayed = paragraphs.map(p => {
-    if (remaining <= 0) return "";
-    if (remaining >= p.length) { remaining -= p.length; return p; }
-    const result = p.slice(0, remaining); remaining = 0; return result;
+/* ── Blur Stagger Text Effect ── */
+function BlurredStaggerParagraphs({ paragraphs }) {
+  const container = (delay) => ({
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        delayChildren: delay,
+        staggerChildren: 0.015,
+      },
+    },
   });
 
-  const done = charIndex >= totalChars;
+  const letterAnim = {
+    hidden: { opacity: 0, filter: "blur(10px)" },
+    show:   { opacity: 1, filter: "blur(0px)", transition: { duration: 0.3 } },
+  };
 
   return (
-    <div ref={ref} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-      {displayed.map((text, i) => (
-        <p key={i} style={{ color: "rgba(255,255,255,0.7)", lineHeight: 1.85, fontSize: "0.97rem", margin: 0, minHeight: "1.85em" }}>
-          {text}
-          {/* Blinking cursor on last active paragraph */}
-          {!done && i === displayed.findLastIndex(t => t.length > 0) && (
-            <span style={{
-              display: "inline-block", width: "2px", height: "1em",
-              background: "#00d4ff", marginLeft: "2px", verticalAlign: "middle",
-              animation: "blink 0.7s step-end infinite",
-            }} />
-          )}
-        </p>
+    <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+      {paragraphs.map((text, i) => (
+        <motion.p
+          key={i}
+          variants={container(i * 0.4)}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
+          style={{ color: "rgba(255,255,255,0.7)", lineHeight: 1.85, fontSize: "0.97rem", margin: 0 }}
+        >
+          {text.split("").map((char, j) => (
+            <motion.span key={j} variants={letterAnim}>
+              {char === " " ? " " : char}
+            </motion.span>
+          ))}
+        </motion.p>
       ))}
-      <style>{`@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }`}</style>
     </div>
   );
 }
@@ -310,8 +287,7 @@ export default function AboutSection() {
             Performance Marketing Expert · 7 năm kinh nghiệm · TP.Hồ Chí Minh
           </p>
 
-          <TypingParagraphs
-            totalDuration={6000}
+          <BlurredStaggerParagraphs
             paragraphs={[
               "Tôi bước vào ngành marketing khi quảng cáo số còn là khái niệm mới mẻ với hầu hết các chủ đầu tư BĐS. Thay vì chạy theo xu hướng, tôi chọn đi sâu vào một thứ duy nhất: hiệu suất có thể đo lường được.",
               "Bất động sản là ngành đòi hỏi khắt khe nhất — ticket cao, chu kỳ mua dài, khách hàng kỹ tính. Chính sự khó đó khiến tôi chọn nó. Tôi xây hệ thống phễu từ đầu: từ cách phân phối quảng cáo đúng tệp, đến cách nuôi dưỡng lead cho đến khi chốt sales.",
