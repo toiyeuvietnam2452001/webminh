@@ -285,14 +285,10 @@ export default function AboutSection() {
             fontSize: "clamp(2.4rem, 5.5vw, 3.8rem)", fontWeight: 800, lineHeight: 1.15,
             background: "linear-gradient(135deg, #ffffff 0%, #00d4ff 55%, #7c5cfc 100%)",
             WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-            backgroundClip: "text", marginBottom: "12px",
+            backgroundClip: "text", marginBottom: "36px",
           }}>
             Nguyễn Công Minh
           </h1>
-
-          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "1rem", marginBottom: "40px" }}>
-            Performance Marketing Expert · 7 năm kinh nghiệm · TP.Hồ Chí Minh
-          </p>
 
           <BlurredStaggerParagraphs
             paragraphs={[
