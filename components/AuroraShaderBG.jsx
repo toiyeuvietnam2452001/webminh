@@ -1,111 +1,125 @@
 "use client";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { usePerformance } from "@/hooks/usePerformance";
 
 export default function AuroraShaderBG() {
   const containerRef = useRef(null);
+  const { tier, config, pixelRatio } = usePerformance();
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
+    // Máy yếu → CSS gradient, không dùng WebGL
+    if (!config.enableShader) {
+      container.style.background =
+        "radial-gradient(ellipse at 20% 80%, rgba(0,212,255,0.1) 0%, transparent 55%), " +
+        "radial-gradient(ellipse at 80% 20%, rgba(124,92,252,0.08) 0%, transparent 55%)";
+      return;
+    }
+
     const w = container.offsetWidth || window.innerWidth;
     const h = container.offsetHeight || window.innerHeight;
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const scene    = new THREE.Scene();
+    const camera   = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
-    renderer.setSize(w, h);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 
-    // Fix: make canvas fill container
-    renderer.domElement.style.position = "absolute";
-    renderer.domElement.style.inset = "0";
-    renderer.domElement.style.width = "100%";
-    renderer.domElement.style.height = "100%";
-    renderer.domElement.style.display = "block";
+    renderer.setPixelRatio(pixelRatio);
+    renderer.setSize(w, h);
+    Object.assign(renderer.domElement.style, {
+      position: "absolute", inset: "0",
+      width: "100%", height: "100%", display: "block",
+    });
     container.appendChild(renderer.domElement);
+
+    const iter = config.iterations;   // 35 | 20
+    const oct  = config.octaves;      // 3  | 2
 
     const material = new THREE.ShaderMaterial({
       uniforms: {
         iTime:       { value: 0 },
         iResolution: { value: new THREE.Vector2(w, h) },
+        iIter:       { value: iter },
       },
-      vertexShader: `void main() { gl_Position = vec4(position, 1.0); }`,
+      vertexShader: `void main(){gl_Position=vec4(position,1.0);}`,
       fragmentShader: `
         uniform float iTime;
-        uniform vec2 iResolution;
-        #define NUM_OCTAVES 3
+        uniform vec2  iResolution;
+        #define NUM_OCTAVES ${oct}
 
-        float rand(vec2 n) { return fract(sin(dot(n, vec2(12.9898,4.1414))) * 43758.5453); }
-
-        float noise(vec2 p) {
-          vec2 ip = floor(p); vec2 u = fract(p);
-          u = u*u*(3.0-2.0*u);
-          float res = mix(mix(rand(ip),rand(ip+vec2(1,0)),u.x),mix(rand(ip+vec2(0,1)),rand(ip+vec2(1,1)),u.x),u.y);
-          return res*res;
+        float rand(vec2 n){return fract(sin(dot(n,vec2(12.9898,4.1414)))*43758.5453);}
+        float noise(vec2 p){
+          vec2 ip=floor(p),u=fract(p);u=u*u*(3.0-2.0*u);
+          return mix(mix(rand(ip),rand(ip+vec2(1,0)),u.x),mix(rand(ip+vec2(0,1)),rand(ip+vec2(1,1)),u.x),u.y);
         }
-
-        float fbm(vec2 x) {
-          float v=0.0; float a=0.3; vec2 shift=vec2(100);
+        float fbm(vec2 x){
+          float v=0.0,a=0.3;vec2 shift=vec2(100);
           mat2 rot=mat2(cos(0.5),sin(0.5),-sin(0.5),cos(0.5));
-          for(int i=0;i<NUM_OCTAVES;++i){ v+=a*noise(x); x=rot*x*2.0+shift; a*=0.4; }
+          for(int i=0;i<NUM_OCTAVES;++i){v+=a*noise(x);x=rot*x*2.0+shift;a*=0.4;}
           return v;
         }
-
-        void main() {
-          vec2 shake = vec2(sin(iTime*1.2)*0.005, cos(iTime*2.1)*0.005);
-          vec2 p = ((gl_FragCoord.xy + shake*iResolution.xy) - iResolution.xy*0.5)
-                   / iResolution.y * mat2(6.0,-4.0,4.0,6.0);
-          vec2 v; vec4 o = vec4(0.0);
-          float f = 2.0 + fbm(p + vec2(iTime*5.0,0.0)) * 0.5;
-
-          for(float i=0.0;i<35.0;i++){
-            v = p + cos(i*i + (iTime + p.x*0.08)*0.025 + i*vec2(13.0,11.0))*3.5
-              + vec2(sin(iTime*3.0+i)*0.003, cos(iTime*3.5-i)*0.003);
-            float tailNoise = fbm(v+vec2(iTime*0.5,i))*0.3*(1.0-(i/35.0));
-            vec4 col = vec4(
-              0.1+0.3*sin(i*0.2+iTime*0.4),
-              0.3+0.5*cos(i*0.3+iTime*0.5),
-              0.7+0.3*sin(i*0.4+iTime*0.3), 1.0);
-            vec4 contrib = col * exp(sin(i*i+iTime*0.8)) / length(max(v,vec2(v.x*f*0.015,v.y*1.5)));
-            o += contrib*(1.0+tailNoise*0.8)*smoothstep(0.0,1.0,i/35.0)*0.6;
+        void main(){
+          vec2 shake=vec2(sin(iTime*1.2)*0.005,cos(iTime*2.1)*0.005);
+          vec2 p=((gl_FragCoord.xy+shake*iResolution.xy)-iResolution.xy*0.5)/iResolution.y*mat2(6.,-4.,4.,6.);
+          vec2 v;vec4 o=vec4(0.0);
+          float f=2.0+fbm(p+vec2(iTime*5.0,0.0))*0.5;
+          float maxI=float(${iter});
+          for(float i=0.0;i<${iter}.0;i++){
+            v=p+cos(i*i+(iTime+p.x*0.08)*0.025+i*vec2(13.,11.))*3.5
+             +vec2(sin(iTime*3.0+i)*0.003,cos(iTime*3.5-i)*0.003);
+            float tn=fbm(v+vec2(iTime*0.5,i))*0.3*(1.0-(i/maxI));
+            vec4 col=vec4(0.1+0.3*sin(i*0.2+iTime*0.4),0.3+0.5*cos(i*0.3+iTime*0.5),0.7+0.3*sin(i*0.4+iTime*0.3),1.0);
+            o+=col*exp(sin(i*i+iTime*0.8))/length(max(v,vec2(v.x*f*0.015,v.y*1.5)))*(1.0+tn*0.8)*smoothstep(0.,1.,i/maxI)*0.6;
           }
-          o = tanh(pow(o/100.0, vec4(1.6)));
-          gl_FragColor = o * 1.5;
+          o=tanh(pow(o/100.0,vec4(1.6)));
+          gl_FragColor=o*1.5;
         }
       `,
     });
 
-    const geometry = new THREE.PlaneGeometry(2, 2);
-    scene.add(new THREE.Mesh(geometry, material));
+    scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material));
 
-    let frameId;
-    let last = 0;
+    const INTERVAL = 1000 / config.fps;
+    let frameId, last = 0;
+
     const animate = (ts) => {
       frameId = requestAnimationFrame(animate);
-      if (ts - last < 32) return; // ~30fps để giảm lag
+      if (ts - last < INTERVAL) return;
       last = ts;
-      material.uniforms.iTime.value += 0.032;
+      material.uniforms.iTime.value += INTERVAL / 1000;
       renderer.render(scene, camera);
     };
     frameId = requestAnimationFrame(animate);
 
-    const handleResize = () => {
-      const w2 = container.offsetWidth;
-      const h2 = container.offsetHeight;
+    // Dừng khi chuyển tab → tiết kiệm tài nguyên
+    const onVisibility = () => {
+      if (document.hidden) cancelAnimationFrame(frameId);
+      else frameId = requestAnimationFrame(animate);
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    const onResize = () => {
+      const w2 = container.offsetWidth, h2 = container.offsetHeight;
       renderer.setSize(w2, h2);
       material.uniforms.iResolution.value.set(w2, h2);
     };
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", onResize);
 
     return () => {
       cancelAnimationFrame(frameId);
-      window.removeEventListener("resize", handleResize);
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("resize", onResize);
       if (container.contains(renderer.domElement)) container.removeChild(renderer.domElement);
-      geometry.dispose(); material.dispose(); renderer.dispose();
+      material.dispose(); renderer.dispose();
     };
-  }, []);
+  }, [tier]);
 
-  return <div ref={containerRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />;
+  return (
+    <div
+      ref={containerRef}
+      style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+    />
+  );
 }
