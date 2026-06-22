@@ -69,16 +69,10 @@ function ProjectCard({ name, image }) {
 
 /* ── Blur Stagger Text Effect ── */
 function BlurredStaggerParagraphs({ paragraphs }) {
-  const container = (delay) => ({
+  const variants = {
     hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        delayChildren: delay,
-        staggerChildren: 0.015,
-      },
-    },
-  });
+    show: { opacity: 1 },
+  };
 
   const letterAnim = {
     hidden: { opacity: 0, filter: "blur(10px)" },
@@ -86,22 +80,35 @@ function BlurredStaggerParagraphs({ paragraphs }) {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "18px", width: "100%" }}>
       {paragraphs.map((text, i) => (
-        <motion.p
+        <motion.div
           key={i}
-          variants={container(i * 0.4)}
+          variants={variants}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.2 }}
-          style={{ color: "rgba(255,255,255,0.7)", lineHeight: 1.85, fontSize: "0.97rem", margin: 0 }}
+          style={{ width: "100%" }}
         >
-          {text.split("").map((char, j) => (
-            <motion.span key={j} variants={letterAnim}>
-              {char === " " ? " " : char}
-            </motion.span>
-          ))}
-        </motion.p>
+          <p style={{
+            color: "rgba(255,255,255,0.7)", lineHeight: 1.85,
+            fontSize: "0.97rem", margin: 0,
+            width: "100%", display: "block",
+          }}>
+            {text.split("").map((char, j) => (
+              <motion.span
+                key={j}
+                initial={{ opacity: 0, filter: "blur(10px)" }}
+                whileInView={{ opacity: 1, filter: "blur(0px)" }}
+                transition={{ duration: 0.3, delay: i * 0.4 + j * 0.012 }}
+                viewport={{ once: true }}
+                style={{ display: "inline" }}
+              >
+                {char}
+              </motion.span>
+            ))}
+          </p>
+        </motion.div>
       ))}
     </div>
   );
@@ -258,7 +265,7 @@ export default function AboutSection() {
 
 
         {/* Nội dung */}
-        <div className="container" style={{ position: "relative", zIndex: 2, maxWidth: "820px" }}>
+        <div className="container" style={{ position: "relative", zIndex: 2, maxWidth: "820px", width: "100%" }}>
 
           {/* Meta badge */}
           <div style={{
