@@ -4,32 +4,6 @@ import { ArrowRight, CheckCircle } from "lucide-react";
 import Image from "next/image";
 import AuroraShaderBG from "./AuroraShaderBG";
 
-/* ─── CountUp ─── */
-function CountUp({ target, suffix = "", duration = 1800 }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const triggered = useRef(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !triggered.current) {
-        triggered.current = true;
-        const step = target / (duration / 16);
-        let cur = 0;
-        const timer = setInterval(() => {
-          cur += step;
-          if (cur >= target) { setCount(target); clearInterval(timer); }
-          else setCount(Math.floor(cur));
-        }, 16);
-      }
-    }, { threshold: 0.5 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [target, duration]);
-  return <span ref={ref}>{count}{suffix}</span>;
-}
-
 /* ─── Projects ─── */
 const projects = [
   { name: "Vinhomes Green Paradise\nVinhomes Cần Giờ",   image: "/projects/vinhomes-can-gio.jpg" },
@@ -43,6 +17,7 @@ const projects = [
   { name: "Charmora City",                                 image: "/projects/charmora-city.jpg" },
   { name: "Vinhomes Hải Vân Bay",                         image: "/projects/vinhomes-hai-van-bay.jpg" },
   { name: "Capital Square",                                image: "/projects/capital-square.jpg" },
+  { name: "Eco Retreat",                                   image: "/projects/eco-retreat.jpg" },
 ];
 
 function ProjectCard({ name, image }) {
@@ -89,33 +64,23 @@ function ProjectCard({ name, image }) {
   );
 }
 
-/* ─── Main ─── */
 export default function AboutSection() {
-  const stats = [
-    { target: 60,  suffix: " Tỷ+", label: "Ngân sách quản lý" },
-    { target: 500, suffix: "+",    label: "Chiến dịch triển khai" },
-    { target: 83,  suffix: "K+",   label: "Lead chất lượng" },
-    { target: 94,  suffix: "%",    label: "Đối tác có giao dịch" },
-  ];
-
   return (
     <main style={{ minHeight: "100vh", paddingTop: "80px", color: "#fff" }}>
 
-      {/* ── HERO với Animated Shader Background ── */}
-      <section style={{ position: "relative", overflow: "hidden", padding: "100px 0 80px" }}>
+      {/* ── HERO + Aurora Background ── */}
+      <section style={{ position: "relative", overflow: "hidden", minHeight: "600px", padding: "100px 0 80px" }}>
 
-        {/* Shader background */}
-        <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
-          <AuroraShaderBG />
-        </div>
+        {/* Aurora shader nền */}
+        <AuroraShaderBG />
 
         {/* Overlay tối để text dễ đọc */}
         <div style={{
           position: "absolute", inset: 0, zIndex: 1,
-          background: "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.75) 100%)",
+          background: "linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.72) 100%)",
         }} />
 
-        {/* Content */}
+        {/* Nội dung */}
         <div className="container" style={{ position: "relative", zIndex: 2, maxWidth: "820px" }}>
 
           {/* Meta badge */}
@@ -132,7 +97,6 @@ export default function AboutSection() {
             Meta Business Partner
           </div>
 
-          {/* Name */}
           <h1 style={{
             fontSize: "clamp(2.4rem, 5.5vw, 3.8rem)", fontWeight: 800, lineHeight: 1.15,
             background: "linear-gradient(135deg, #ffffff 0%, #00d4ff 55%, #7c5cfc 100%)",
@@ -142,11 +106,10 @@ export default function AboutSection() {
             Nguyễn Công Minh
           </h1>
 
-          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "1rem", marginBottom: "40px", letterSpacing: "0.5px" }}>
+          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "1rem", marginBottom: "40px" }}>
             Performance Marketing Expert · 7 năm kinh nghiệm · TP.Hồ Chí Minh
           </p>
 
-          {/* Intro paragraphs */}
           <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
             {[
               "Tôi bước vào ngành marketing khi quảng cáo số còn là khái niệm mới mẻ với hầu hết các chủ đầu tư BĐS. Thay vì chạy theo xu hướng, tôi chọn đi sâu vào một thứ duy nhất: hiệu suất có thể đo lường được.",
@@ -154,9 +117,7 @@ export default function AboutSection() {
               "Hơn 500 chiến dịch đã được triển khai — trải dài từ các dự án tại Hà Nội, Đà Nẵng đến TP.HCM và các tỉnh vệ tinh. Mỗi thị trường có đặc thù riêng về hành vi khách hàng, và tôi hiểu điều đó hơn ai hết.",
               "Là Meta Business Partner chính thức, tôi tiếp cận mỗi dự án bằng tư duy đo lường thực tế: không chạy theo số lượt xem hay lượt click, mà tập trung vào Lead chất lượng — và giao dịch thực sự khép lại.",
             ].map((para, i) => (
-              <p key={i} style={{ color: "rgba(255,255,255,0.7)", lineHeight: 1.85, fontSize: "0.97rem", margin: 0 }}>
-                {para}
-              </p>
+              <p key={i} style={{ color: "rgba(255,255,255,0.7)", lineHeight: 1.85, fontSize: "0.97rem", margin: 0 }}>{para}</p>
             ))}
           </div>
 
@@ -168,32 +129,8 @@ export default function AboutSection() {
         </div>
       </section>
 
-      {/* ── STATS ── */}
-      <section style={{ padding: "56px 0", borderTop: "1px solid rgba(255,255,255,0.07)", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
-        <div className="container">
-          <div style={{
-            display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-            gap: "40px", textAlign: "center", maxWidth: "860px", margin: "0 auto",
-          }}>
-            {stats.map((s, i) => (
-              <div key={i}>
-                <div style={{
-                  fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 800,
-                  background: "linear-gradient(135deg, #fff 0%, #00d4ff 100%)",
-                  WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-                  backgroundClip: "text", marginBottom: "8px",
-                }}>
-                  <CountUp target={s.target} suffix={s.suffix} />
-                </div>
-                <div style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.88rem" }}>{s.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ── DỰ ÁN TIÊU BIỂU ── */}
-      <section style={{ padding: "80px 0" }}>
+      <section style={{ padding: "80px 0", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
         <div className="container">
           <p style={{ color: "#00d4ff", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "2.5px", marginBottom: "12px", fontWeight: 600 }}>Portfolio</p>
           <h2 style={{ fontSize: "clamp(1.8rem, 3vw, 2.4rem)", fontWeight: 700, marginBottom: "8px" }}>Dự án tiêu biểu</h2>
@@ -229,8 +166,7 @@ export default function AboutSection() {
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", textAlign: "left" }}>
               {["Được đào tạo trực tiếp từ Meta", "Hỗ trợ kỹ thuật ưu tiên từ Meta", "Cập nhật sản phẩm & chính sách sớm nhất"].map((t, i) => (
                 <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", color: "rgba(255,255,255,0.55)", fontSize: "0.88rem" }}>
-                  <CheckCircle size={15} style={{ color: "#4da6ff", flexShrink: 0 }} />
-                  {t}
+                  <CheckCircle size={15} style={{ color: "#4da6ff", flexShrink: 0 }} />{t}
                 </div>
               ))}
             </div>
