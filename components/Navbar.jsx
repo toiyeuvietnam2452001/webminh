@@ -5,6 +5,7 @@ import styles from "./Navbar.module.css";
 
 const navLinks = [
     { label: "Trang chủ",       href: "/"          },
+    { label: "Giới thiệu",      href: "/about"     },
     { label: "Dịch vụ Ads",     href: "/#features" },
     { label: "Media Quay Dựng", href: "/media"     },
     { label: "Bảng giá",        href: "/#pricing"  },
@@ -33,7 +34,7 @@ export default function Navbar() {
                 <ul className={`${styles.links} ${menuOpen ? styles.open : ""}`}>
                     {navLinks.map((link) => (
                         <li key={link.href}>
-                            <a
+                            
                                 href={link.href}
                                 onClick={() => setMenuOpen(false)}
                                 className={styles.link}
