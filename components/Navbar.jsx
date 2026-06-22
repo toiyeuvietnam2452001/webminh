@@ -34,11 +34,7 @@ export default function Navbar() {
                 <ul className={`${styles.links} ${menuOpen ? styles.open : ""}`}>
                     {navLinks.map((link) => (
                         <li key={link.href}>
-                            
-                                href={link.href}
-                                onClick={() => setMenuOpen(false)}
-                                className={styles.link}
-                            >
+                            <a href={link.href} onClick={() => setMenuOpen(false)} className={styles.link}>
                                 {link.label}
                             </a>
                         </li>
@@ -73,11 +69,7 @@ export default function Navbar() {
                     </a>
                 </div>
 
-                <button
-                    className={styles.hamburger}
-                    onClick={() => setMenuOpen(!menuOpen)}
-                    aria-label="Toggle menu"
-                >
+                <button className={styles.hamburger} onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
                     {menuOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>
             </div>
