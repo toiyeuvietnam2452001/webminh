@@ -65,6 +65,142 @@ function ProjectCard({ name, image }) {
   );
 }
 
+
+/* ── Meta Partner GradientCard ── */
+function MetaPartnerCard() {
+  const cardRef = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [rotation, setRotation] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    setRotation({ x: -(y / rect.height) * 5, y: (x / rect.width) * 5 });
+  };
+
+  const glowShadow = isHovered
+    ? "0 0 20px 4px rgba(172,92,255,0.9), 0 0 30px 6px rgba(138,58,185,0.7), 0 0 40px 8px rgba(56,189,248,0.5)"
+    : "0 0 15px 3px rgba(172,92,255,0.8), 0 0 25px 5px rgba(138,58,185,0.6), 0 0 35px 7px rgba(56,189,248,0.4)";
+
+  return (
+    <div style={{ display: "flex", justifyContent: "center" }}>
+      <motion.div
+        ref={cardRef}
+        style={{
+          position: "relative", borderRadius: "32px", overflow: "hidden",
+          width: "360px",
+          transformStyle: "preserve-3d",
+          backgroundColor: "#0e131f",
+          boxShadow: "0 -10px 100px 10px rgba(78,99,255,0.25), 0 0 10px rgba(0,0,0,0.5)",
+        }}
+        animate={{ y: isHovered ? -5 : 0, rotateX: rotation.x, rotateY: rotation.y }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => { setIsHovered(false); setRotation({ x: 0, y: 0 }); }}
+        onMouseMove={handleMouseMove}
+      >
+        {/* Glass reflection */}
+        <motion.div style={{
+          position: "absolute", inset: 0, zIndex: 35, pointerEvents: "none",
+          background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 40%, rgba(255,255,255,0) 80%, rgba(255,255,255,0.05) 100%)",
+        }} animate={{ opacity: isHovered ? 0.7 : 0.5 }} transition={{ duration: 0.4 }} />
+
+        {/* Dark bg */}
+        <div style={{ position: "absolute", inset: 0, zIndex: 0, background: "linear-gradient(180deg, #0e131f 0%, #070a12 100%)" }} />
+
+        {/* Noise texture */}
+        <div style={{
+          position: "absolute", inset: 0, zIndex: 10, opacity: 0.3, mixBlendMode: "overlay",
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+        }} />
+
+        {/* Purple/blue glow */}
+        <motion.div style={{
+          position: "absolute", bottom: 0, left: 0, right: 0, height: "66%", zIndex: 20,
+          background: "radial-gradient(ellipse at bottom right, rgba(172,92,255,0.7) -10%, rgba(79,70,229,0) 70%), radial-gradient(ellipse at bottom left, rgba(56,189,248,0.7) -10%, rgba(79,70,229,0) 70%)",
+          filter: "blur(40px)",
+        }} animate={{ opacity: isHovered ? 0.9 : 0.8 }} transition={{ duration: 0.4 }} />
+
+        {/* Central purple glow */}
+        <motion.div style={{
+          position: "absolute", bottom: 0, left: 0, right: 0, height: "66%", zIndex: 21,
+          background: "radial-gradient(circle at bottom center, rgba(161,58,229,0.7) -20%, rgba(79,70,229,0) 60%)",
+          filter: "blur(45px)",
+        }} animate={{ opacity: isHovered ? 0.85 : 0.75 }} transition={{ duration: 0.4 }} />
+
+        {/* Bottom border glow */}
+        <motion.div style={{
+          position: "absolute", bottom: 0, left: 0, right: 0, height: "2px", zIndex: 25,
+          background: "linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0.05) 100%)",
+        }} animate={{ boxShadow: glowShadow, opacity: isHovered ? 1 : 0.9 }} transition={{ duration: 0.4 }} />
+        {/* Corner glows */}
+        {["left", "right"].map(side => (
+          <motion.div key={side} style={{
+            position: "absolute", bottom: 0, [side]: 0, height: "25%", width: "1px", zIndex: 25, borderRadius: "999px",
+            background: "linear-gradient(to top, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 100%)",
+          }} animate={{ boxShadow: glowShadow }} transition={{ duration: 0.4 }} />
+        ))}
+
+        {/* Card content */}
+        <motion.div style={{
+          position: "relative", zIndex: 40,
+          display: "flex", flexDirection: "column", alignItems: "center",
+          padding: "32px 32px 36px",
+          gap: "20px",
+        }} animate={{ z: 2 }}>
+
+          {/* Meta BP Image */}
+          <motion.div style={{
+            borderRadius: "16px", overflow: "hidden", width: "100%",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.4)",
+          }}
+            initial={{ filter: "blur(3px)", opacity: 0.7 }}
+            animate={{ filter: "blur(0px)", opacity: 1 }}
+            transition={{ duration: 1.2 }}
+          >
+            <Image
+              src="/meta-business-partner.png"
+              alt="Meta Business Partner"
+              width={296}
+              height={167}
+              style={{ width: "100%", height: "auto", display: "block" }}
+            />
+          </motion.div>
+
+          {/* Title */}
+          <motion.div style={{ textAlign: "center" }}
+            initial={{ filter: "blur(3px)", opacity: 0.7 }}
+            animate={{ filter: "blur(0px)", opacity: 1 }}
+            transition={{ duration: 1.2, delay: 0.2 }}
+          >
+            <div style={{ fontSize: "1.3rem", fontWeight: 700, color: "#fff", marginBottom: "6px" }}>
+              Meta Business Partner
+            </div>
+            <div style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.85rem", lineHeight: 1.6 }}>
+              Đối tác chính thức được Meta công nhận<br />trong lĩnh vực quảng cáo Bất động sản
+            </div>
+          </motion.div>
+
+          {/* Checkmarks */}
+          <motion.div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", textAlign: "left" }}
+            initial={{ filter: "blur(3px)", opacity: 0.7 }}
+            animate={{ filter: "blur(0px)", opacity: 1 }}
+            transition={{ duration: 1.2, delay: 0.4 }}
+          >
+            {["Được đào tạo trực tiếp từ Meta", "Hỗ trợ kỹ thuật ưu tiên từ Meta", "Cập nhật sản phẩm & chính sách sớm nhất"].map((t, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", color: "rgba(255,255,255,0.6)", fontSize: "0.87rem" }}>
+                <CheckCircle size={15} style={{ color: "#4da6ff", flexShrink: 0 }} />{t}
+              </div>
+            ))}
+          </motion.div>
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+}
+
 export default function AboutSection() {
   return (
     <main style={{ minHeight: "100vh", paddingTop: "80px", color: "#fff", position: "relative" }}>
