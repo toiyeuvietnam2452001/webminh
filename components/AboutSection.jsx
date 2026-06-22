@@ -280,41 +280,8 @@ export default function AboutSection() {
       {/* ── META BUSINESS PARTNER ── */}
       <section style={{ position: "relative", zIndex: 1, padding: "72px 0", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
         <div className="container" style={{ textAlign: "center" }}>
-          <p style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "2.5px", marginBottom: "36px", fontWeight: 600 }}>Chứng nhận chính thức</p>
-          <div style={{
-            display: "inline-flex", flexDirection: "column", alignItems: "center", gap: "24px",
-            background: "linear-gradient(135deg, rgba(0,130,251,0.08) 0%, rgba(124,92,252,0.08) 100%)",
-            border: "1px solid rgba(0,130,251,0.2)", borderRadius: "24px",
-            padding: "40px 48px", maxWidth: "460px", width: "100%",
-          }}>
-            {/* Ảnh thật Meta Business Partner */}
-            <div style={{
-              borderRadius: "16px", overflow: "hidden",
-              width: "100%", maxWidth: "320px",
-              boxShadow: "0 8px 32px rgba(0,130,251,0.2)",
-            }}>
-              <Image
-                src="/meta-business-partner.png"
-                alt="Meta Business Partner"
-                width={320}
-                height={180}
-                style={{ width: "100%", height: "auto", display: "block" }}
-              />
-            </div>
-            <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#fff", marginBottom: "6px" }}>Meta Business Partner</div>
-              <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.88rem", lineHeight: 1.6 }}>
-                Đối tác chính thức được Meta công nhận<br/>trong lĩnh vực quảng cáo Bất động sản
-              </div>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", textAlign: "left" }}>
-              {["Được đào tạo trực tiếp từ Meta", "Hỗ trợ kỹ thuật ưu tiên từ Meta", "Cập nhật sản phẩm & chính sách sớm nhất"].map((t, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", color: "rgba(255,255,255,0.55)", fontSize: "0.88rem" }}>
-                  <CheckCircle size={15} style={{ color: "#4da6ff", flexShrink: 0 }} />{t}
-                </div>
-              ))}
-            </div>
-          </div>
+          <p style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "2.5px", marginBottom: "48px", fontWeight: 600 }}>Chứng nhận chính thức</p>
+          <MetaPartnerCard />
         </div>
       </section>
 
