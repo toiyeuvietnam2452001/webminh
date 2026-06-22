@@ -3,7 +3,7 @@ import Script from "next/script";
 
 export const metadata = {
   metadataBase: new URL("https://minhnguyenmkt.website"),
-  title: "Performance Marketing BĐS | Chuyên gia Tối ưu Chuyển đổi",
+  title: "Minh Mkt | Performance Marketing BĐS",
   description:
     "Giải pháp Performance Marketing toàn diện cho Bất động sản – Từ chiến lược phân phối quảng cáo, tối ưu phễu chuyển đổi đến chốt sales thực chiến.",
   keywords: [
