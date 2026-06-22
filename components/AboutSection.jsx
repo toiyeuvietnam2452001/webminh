@@ -66,19 +66,18 @@ function ProjectCard({ name, image }) {
 
 export default function AboutSection() {
   return (
-    <main style={{ minHeight: "100vh", paddingTop: "80px", color: "#fff" }}>
+    <main style={{ minHeight: "100vh", paddingTop: "80px", color: "#fff", position: "relative" }}>
+
+      {/* ── Aurora phủ toàn trang ── */}
+      <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
+        <AuroraShaderBG />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.62)" }} />
+      </div>
 
       {/* ── HERO + Aurora Background ── */}
-      <section style={{ position: "relative", overflow: "hidden", minHeight: "600px", padding: "100px 0 80px" }}>
+      <section style={{ position: "relative", zIndex: 1, padding: "100px 0 80px" }}>
 
-        {/* Aurora shader nền */}
-        <AuroraShaderBG />
 
-        {/* Overlay tối để text dễ đọc */}
-        <div style={{
-          position: "absolute", inset: 0, zIndex: 1,
-          background: "linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.72) 100%)",
-        }} />
 
         {/* Nội dung */}
         <div className="container" style={{ position: "relative", zIndex: 2, maxWidth: "820px" }}>
@@ -130,7 +129,7 @@ export default function AboutSection() {
       </section>
 
       {/* ── DỰ ÁN TIÊU BIỂU ── */}
-      <section style={{ padding: "80px 0", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+      <section style={{ position: "relative", zIndex: 1, padding: "80px 0", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
         <div className="container">
           <p style={{ color: "#00d4ff", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "2.5px", marginBottom: "12px", fontWeight: 600 }}>Portfolio</p>
           <h2 style={{ fontSize: "clamp(1.8rem, 3vw, 2.4rem)", fontWeight: 700, marginBottom: "8px" }}>Dự án tiêu biểu</h2>
@@ -142,7 +141,7 @@ export default function AboutSection() {
       </section>
 
       {/* ── META BUSINESS PARTNER ── */}
-      <section style={{ padding: "72px 0", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+      <section style={{ position: "relative", zIndex: 1, padding: "72px 0", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
         <div className="container" style={{ textAlign: "center" }}>
           <p style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "2.5px", marginBottom: "36px", fontWeight: 600 }}>Chứng nhận chính thức</p>
           <div style={{
@@ -175,7 +174,7 @@ export default function AboutSection() {
       </section>
 
       {/* ── CTA ── */}
-      <section style={{ padding: "80px 0", textAlign: "center" }}>
+      <section style={{ position: "relative", zIndex: 1, padding: "80px 0", textAlign: "center" }}>
         <div className="container">
           <h2 style={{ fontSize: "clamp(1.8rem, 3vw, 2.2rem)", fontWeight: 700, marginBottom: "16px" }}>Sẵn sàng hợp tác?</h2>
           <p style={{ color: "rgba(255,255,255,0.4)", marginBottom: "36px", fontSize: "0.95rem" }}>Cùng xây dựng chiến lược Performance Marketing cho dự án BĐS của anh/chị</p>
