@@ -96,4 +96,68 @@ export default function NeuralNoise({ color = [0.4, 0.1, 0.9], speed = 0.001 }) 
     if (!vs || !fs) return;
 
     const prog = gl.createProgram();
-    gl.attachShader(prog, vs); gl.attachShader(prog, fs);
+    gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,1,1]), gl.STATIC_DRAW);
+    gl.useProgram(prog);
+
+    const pos = gl.getAttribLocation(prog, "a_position");
+    gl.enableVertexAttribArray(pos);
+    gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+
+    const u = {
+      time: gl.getUniformLocation(prog, "u_time"),
+      ratio: gl.getUniformLocation(prog, "u_ratio"),
+      pointer: gl.getUniformLocation(prog, "u_pointer_position"),
+      color: gl.getUniformLocation(prog, "u_color"),
+      speed: gl.getUniformLocation(prog, "u_speed"),
+    };
+    gl.uniform3f(u.color, color[0], color[1], color[2]);
+    gl.uniform1f(u.speed, speed);
+
+    const resize = () => {
+      canvas.width = window.innerWidth * pr;
+      canvas.height = window.innerHeight * pr;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.uniform1f(u.ratio, canvas.width / canvas.height);
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    const onMove = (e) => { pointer.tX = e.clientX; pointer.tY = e.clientY; };
+    const onTouch = (e) => { if (e.targetTouches[0]) { pointer.tX = e.targetTouches[0].clientX; pointer.tY = e.targetTouches[0].clientY; } };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("touchmove", onTouch);
+
+    const INTERVAL = 1000 / config.fps;
+    let animId, last = 0;
+    const render = (now = 0) => {
+      animId = requestAnimationFrame(render);
+      if (now - last < INTERVAL) return;
+      last = now;
+      pointer.x += (pointer.tX - pointer.x) * 0.2;
+      pointer.y += (pointer.tY - pointer.y) * 0.2;
+      gl.uniform1f(u.time, now);
+      gl.uniform2f(u.pointer, pointer.x / window.innerWidth, 1 - pointer.y / window.innerHeight);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    };
+    animId = requestAnimationFrame(render);
+
+    const onVis = () => { if (document.hidden) cancelAnimationFrame(animId); else animId = requestAnimationFrame(render); };
+    document.addEventListener("visibilitychange", onVis);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("touchmove", onTouch);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, [tier]);
+
+  return (
+    <canvas ref={canvasRef} style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none" }} />
+  );
+}
