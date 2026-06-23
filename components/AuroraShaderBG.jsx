@@ -2,14 +2,12 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 
-import React, { useEffect, useState } from "react";
-
 /* ── Performance Detection ── */
 function detectTier() {
   if (typeof window === "undefined") return "medium";
   if (/Mobi|Android/i.test(navigator.userAgent)) return "low";
   const cores = navigator.hardwareConcurrency || 4;
-  const ram   = navigator.deviceMemory;
+  const ram = navigator.deviceMemory;
   try {
     const gl = document.createElement("canvas").getContext("webgl2");
     if (!gl) return "low";
@@ -17,37 +15,32 @@ function detectTier() {
     if (ext) {
       const r = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL).toLowerCase();
       if (r.includes("apple")) return "high";
-      if (["geforce","quadro","radeon rx","radeon pro","tesla","arc a"].some(p=>r.includes(p))) return "high";
-      if (r.includes("intel")||r.includes("amd")||r.includes("radeon")) return "medium";
+      if (["geforce","quadro","radeon rx","radeon pro","tesla","arc a"].some(p => r.includes(p))) return "high";
+      if (r.includes("intel") || r.includes("amd") || r.includes("radeon")) return "medium";
     }
   } catch { return "low"; }
-  if (cores<=2||(ram&&ram<=2)) return "low";
-  if (cores>=8||(ram&&ram>=8)) return "high";
+  if (cores <= 2 || (ram && ram <= 2)) return "low";
+  if (cores >= 8 || (ram && ram >= 8)) return "high";
   return "medium";
 }
 const CONFIGS = {
-  high:   { enableShader:true,  iterations:35, octaves:3, fbmIter:5,  mainIter:12, neuralIter:15, fps:60, pixelRatio:2 },
-  medium: { enableShader:true,  iterations:20, octaves:2, fbmIter:3,  mainIter:8,  neuralIter:10, fps:30, pixelRatio:1 },
-  low:    { enableShader:false, iterations:0,  octaves:0, fbmIter:0,  mainIter:0,  neuralIter:0,  fps:0,  pixelRatio:1 },
+  high:   { enableShader: true,  iterations: 35, octaves: 3, fps: 60, pixelRatio: 2 },
+  medium: { enableShader: true,  iterations: 20, octaves: 2, fps: 30, pixelRatio: 1 },
+  low:    { enableShader: false, iterations: 0,  octaves: 0, fps: 0,  pixelRatio: 1 },
 };
-function usePerformance() {
-  const [tier, setTier] = useState("medium");
-  useEffect(() => { setTier(detectTier()); }, []);
-  const config = CONFIGS[tier];
-  const pr = Math.min(typeof window!=="undefined"?window.devicePixelRatio:1, config.pixelRatio);
-  return { tier, config, pixelRatio: pr };
-}
-
 
 export default function AuroraShaderBG() {
   const containerRef = useRef(null);
-  const { tier, config, pixelRatio } = usePerformance();
+  const [tier, setTier] = useState("medium");
+
+  useEffect(() => { setTier(detectTier()); }, []);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+    const config = CONFIGS[tier];
+    const pr = Math.min(window.devicePixelRatio || 1, config.pixelRatio);
 
-    // Máy yếu → CSS gradient, không dùng WebGL
     if (!config.enableShader) {
       container.style.background =
         "radial-gradient(ellipse at 20% 80%, rgba(0,212,255,0.1) 0%, transparent 55%), " +
@@ -57,34 +50,29 @@ export default function AuroraShaderBG() {
 
     const w = container.offsetWidth || window.innerWidth;
     const h = container.offsetHeight || window.innerHeight;
-
-    const scene    = new THREE.Scene();
-    const camera   = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const scene = new THREE.Scene();
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
-
-    renderer.setPixelRatio(pixelRatio);
+    renderer.setPixelRatio(pr);
     renderer.setSize(w, h);
     Object.assign(renderer.domElement.style, {
-      position: "absolute", inset: "0",
-      width: "100%", height: "100%", display: "block",
+      position: "absolute", inset: "0", width: "100%", height: "100%", display: "block",
     });
     container.appendChild(renderer.domElement);
 
-    const iter = config.iterations;   // 35 | 20
-    const oct  = config.octaves;      // 3  | 2
+    const ITER = config.iterations;
+    const OCT = config.octaves;
 
     const material = new THREE.ShaderMaterial({
       uniforms: {
-        iTime:       { value: 0 },
+        iTime: { value: 0 },
         iResolution: { value: new THREE.Vector2(w, h) },
-        iIter:       { value: iter },
       },
       vertexShader: `void main(){gl_Position=vec4(position,1.0);}`,
       fragmentShader: `
         uniform float iTime;
-        uniform vec2  iResolution;
-        #define NUM_OCTAVES ${oct}
-
+        uniform vec2 iResolution;
+        #define NUM_OCTAVES ${OCT}
         float rand(vec2 n){return fract(sin(dot(n,vec2(12.9898,4.1414)))*43758.5453);}
         float noise(vec2 p){
           vec2 ip=floor(p),u=fract(p);u=u*u*(3.0-2.0*u);
@@ -101,10 +89,9 @@ export default function AuroraShaderBG() {
           vec2 p=((gl_FragCoord.xy+shake*iResolution.xy)-iResolution.xy*0.5)/iResolution.y*mat2(6.,-4.,4.,6.);
           vec2 v;vec4 o=vec4(0.0);
           float f=2.0+fbm(p+vec2(iTime*5.0,0.0))*0.5;
-          float maxI=float(${iter});
-          for(float i=0.0;i<${iter}.0;i++){
-            v=p+cos(i*i+(iTime+p.x*0.08)*0.025+i*vec2(13.,11.))*3.5
-             +vec2(sin(iTime*3.0+i)*0.003,cos(iTime*3.5-i)*0.003);
+          float maxI=${ITER}.0;
+          for(float i=0.0;i<${ITER}.0;i++){
+            v=p+cos(i*i+(iTime+p.x*0.08)*0.025+i*vec2(13.,11.))*3.5+vec2(sin(iTime*3.0+i)*0.003,cos(iTime*3.5-i)*0.003);
             float tn=fbm(v+vec2(iTime*0.5,i))*0.3*(1.0-(i/maxI));
             vec4 col=vec4(0.1+0.3*sin(i*0.2+iTime*0.4),0.3+0.5*cos(i*0.3+iTime*0.5),0.7+0.3*sin(i*0.4+iTime*0.3),1.0);
             o+=col*exp(sin(i*i+iTime*0.8))/length(max(v,vec2(v.x*f*0.015,v.y*1.5)))*(1.0+tn*0.8)*smoothstep(0.,1.,i/maxI)*0.6;
@@ -114,12 +101,10 @@ export default function AuroraShaderBG() {
         }
       `,
     });
-
     scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material));
 
     const INTERVAL = 1000 / config.fps;
     let frameId, last = 0;
-
     const animate = (ts) => {
       frameId = requestAnimationFrame(animate);
       if (ts - last < INTERVAL) return;
@@ -129,33 +114,19 @@ export default function AuroraShaderBG() {
     };
     frameId = requestAnimationFrame(animate);
 
-    // Dừng khi chuyển tab → tiết kiệm tài nguyên
-    const onVisibility = () => {
-      if (document.hidden) cancelAnimationFrame(frameId);
-      else frameId = requestAnimationFrame(animate);
-    };
-    document.addEventListener("visibilitychange", onVisibility);
-
-    const onResize = () => {
-      const w2 = container.offsetWidth, h2 = container.offsetHeight;
-      renderer.setSize(w2, h2);
-      material.uniforms.iResolution.value.set(w2, h2);
-    };
+    const onVis = () => { if (document.hidden) cancelAnimationFrame(frameId); else frameId = requestAnimationFrame(animate); };
+    document.addEventListener("visibilitychange", onVis);
+    const onResize = () => { const w2=container.offsetWidth,h2=container.offsetHeight; renderer.setSize(w2,h2); material.uniforms.iResolution.value.set(w2,h2); };
     window.addEventListener("resize", onResize);
 
     return () => {
       cancelAnimationFrame(frameId);
-      document.removeEventListener("visibilitychange", onVisibility);
+      document.removeEventListener("visibilitychange", onVis);
       window.removeEventListener("resize", onResize);
       if (container.contains(renderer.domElement)) container.removeChild(renderer.domElement);
       material.dispose(); renderer.dispose();
     };
   }, [tier]);
 
-  return (
-    <div
-      ref={containerRef}
-      style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
-    />
-  );
+  return <div ref={containerRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />;
 }
