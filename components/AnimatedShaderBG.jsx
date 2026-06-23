@@ -1,12 +1,34 @@
 "use client";
 import { useEffect, useRef } from "react";
+import { usePerformance } from "@/hooks/usePerformance";
 
-const VS = `#version 300 es
+export default function AnimatedShaderBG() {
+  const canvasRef = useRef(null);
+  const { tier, config, pixelRatio } = usePerformance();
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    // Máy yếu → CSS gradient đơn giản
+    if (!config.enableShader) {
+      canvas.style.background =
+        "linear-gradient(135deg, #000814 0%, #001845 50%, #002855 100%)";
+      return;
+    }
+
+    const gl = canvas.getContext("webgl2");
+    if (!gl) { console.warn("WebGL2 not supported"); return; }
+
+    const FBM  = config.fbmIter;   // 5 | 3
+    const MAIN = config.mainIter;  // 12 | 8
+
+    const VS = `#version 300 es
 precision highp float;
 in vec4 position;
 void main(){ gl_Position = position; }`;
 
-const FS = `#version 300 es
+    const FS = `#version 300 es
 precision highp float;
 out vec4 O;
 uniform vec2 resolution;
@@ -27,7 +49,7 @@ float noise(in vec2 p){
 }
 float fbm(vec2 p){
   float t=.0,a=1.;mat2 m=mat2(1.,-.5,.2,1.2);
-  for(int i=0;i<5;i++){t+=a*noise(p);p*=2.*m;a*=.5;}
+  for(int i=0;i<${FBM};i++){t+=a*noise(p);p*=2.*m;a*=.5;}
   return t;
 }
 float clouds(vec2 p){
@@ -43,7 +65,7 @@ void main(void){
   vec3 col=vec3(0);
   float bg=clouds(vec2(st.x+T*.5,-st.y));
   uv*=1.-.3*(sin(T*.2)*.5+.5);
-  for(float i=1.;i<12.;i++){
+  for(float i=1.;i<${MAIN}.0;i++){
     uv+=.1*cos(i*vec2(.1+.01*i,.8)+i*i+T*.5+.1*uv.x);
     vec2 p=uv;
     float d=length(p);
@@ -54,16 +76,6 @@ void main(void){
   }
   O=vec4(col,1);
 }`;
-
-export default function AnimatedShaderBG() {
-  const canvasRef = useRef(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const gl = canvas.getContext("webgl2");
-    if (!gl) { console.warn("WebGL2 not supported"); return; }
 
     const mkShader = (type, src) => {
       const s = gl.createShader(type);
@@ -80,10 +92,8 @@ export default function AnimatedShaderBG() {
     if (!vs || !fs) return;
 
     const prog = gl.createProgram();
-    gl.attachShader(prog, vs);
-    gl.attachShader(prog, fs);
-    gl.linkProgram(prog);
-    gl.useProgram(prog);
+    gl.attachShader(prog, vs); gl.attachShader(prog, fs);
+    gl.linkProgram(prog); gl.useProgram(prog);
 
     const buf = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
@@ -97,35 +107,46 @@ export default function AnimatedShaderBG() {
     const uTime = gl.getUniformLocation(prog, "time");
 
     const resize = () => {
-      const dpr = Math.max(1, 0.5 * window.devicePixelRatio);
-      canvas.width  = window.innerWidth  * dpr;
-      canvas.height = window.innerHeight * dpr;
+      canvas.width  = window.innerWidth  * pixelRatio;
+      canvas.height = window.innerHeight * pixelRatio;
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.uniform2f(uRes, canvas.width, canvas.height);
     };
     resize();
     window.addEventListener("resize", resize);
 
-    let animId;
+    // Cap framerate theo tier
+    const INTERVAL = 1000 / config.fps;
+    let animId, last = 0;
+
     const render = (now = 0) => {
+      animId = requestAnimationFrame(render);
+      if (now - last < INTERVAL) return;
+      last = now;
       gl.uniform1f(uTime, now * 0.001);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      animId = requestAnimationFrame(render);
     };
-    render();
+    animId = requestAnimationFrame(render);
+
+    // Dừng khi chuyển tab
+    const onVisibility = () => {
+      if (document.hidden) cancelAnimationFrame(animId);
+      else animId = requestAnimationFrame(render);
+    };
+    document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", resize);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, []);
+  }, [tier]);
 
   return (
     <canvas
       ref={canvasRef}
       style={{
-        position: "fixed",
-        top: 0, left: 0,
+        position: "fixed", top: 0, left: 0,
         width: "100%", height: "100%",
         pointerEvents: "none",
       }}
