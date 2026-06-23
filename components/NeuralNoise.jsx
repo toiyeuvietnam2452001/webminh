@@ -1,6 +1,42 @@
 "use client";
-import { useEffect, useRef } from "react";
-import { usePerformance } from "@/hooks/usePerformance";
+import { useEffect, useRef, useState } from "react";
+
+import React, { useEffect, useState } from "react";
+
+/* ── Performance Detection ── */
+function detectTier() {
+  if (typeof window === "undefined") return "medium";
+  if (/Mobi|Android/i.test(navigator.userAgent)) return "low";
+  const cores = navigator.hardwareConcurrency || 4;
+  const ram   = navigator.deviceMemory;
+  try {
+    const gl = document.createElement("canvas").getContext("webgl2");
+    if (!gl) return "low";
+    const ext = gl.getExtension("WEBGL_debug_renderer_info");
+    if (ext) {
+      const r = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL).toLowerCase();
+      if (r.includes("apple")) return "high";
+      if (["geforce","quadro","radeon rx","radeon pro","tesla","arc a"].some(p=>r.includes(p))) return "high";
+      if (r.includes("intel")||r.includes("amd")||r.includes("radeon")) return "medium";
+    }
+  } catch { return "low"; }
+  if (cores<=2||(ram&&ram<=2)) return "low";
+  if (cores>=8||(ram&&ram>=8)) return "high";
+  return "medium";
+}
+const CONFIGS = {
+  high:   { enableShader:true,  iterations:35, octaves:3, fbmIter:5,  mainIter:12, neuralIter:15, fps:60, pixelRatio:2 },
+  medium: { enableShader:true,  iterations:20, octaves:2, fbmIter:3,  mainIter:8,  neuralIter:10, fps:30, pixelRatio:1 },
+  low:    { enableShader:false, iterations:0,  octaves:0, fbmIter:0,  mainIter:0,  neuralIter:0,  fps:0,  pixelRatio:1 },
+};
+function usePerformance() {
+  const [tier, setTier] = useState("medium");
+  useEffect(() => { setTier(detectTier()); }, []);
+  const config = CONFIGS[tier];
+  const pr = Math.min(typeof window!=="undefined"?window.devicePixelRatio:1, config.pixelRatio);
+  return { tier, config, pixelRatio: pr };
+}
+
 
 export default function NeuralNoise({
   color = [0.4, 0.1, 0.9],
