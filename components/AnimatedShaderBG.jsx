@@ -1,10 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 
-/* ── Performance Detection ── */
 function detectTier() {
-  if (typeof window === "undefined") return "medium";
-  if (/Mobi|Android/i.test(navigator.userAgent)) return "low";
+  if (typeof window === "undefined") return null;
+  if (/Mobi|Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent)) return "low";
   const cores = navigator.hardwareConcurrency || 4;
   const ram = navigator.deviceMemory;
   try {
@@ -22,10 +21,10 @@ function detectTier() {
   if (cores >= 8 || (ram && ram >= 8)) return "high";
   return "medium";
 }
+
 const CONFIGS = {
-  high:   { enableShader: true,  fbmIter: 5,  mainIter: 12, fps: 60, pixelRatio: 2 },
-  medium: { enableShader: true,  fbmIter: 3,  mainIter: 8,  fps: 30, pixelRatio: 1 },
-  low:    { enableShader: false, fbmIter: 0,  mainIter: 0,  fps: 0,  pixelRatio: 1 },
+  high:   { fbmIter: 5,  mainIter: 12, fps: 60, pixelRatio: 2 },
+  medium: { fbmIter: 3,  mainIter: 8,  fps: 30, pixelRatio: 1 },
 };
 
 const VS = `#version 300 es
@@ -33,26 +32,35 @@ precision highp float;
 in vec4 position;
 void main(){ gl_Position = position; }`;
 
+/* ── Mobile fallback: div thuần CSS ── */
+function MobileAnimatedBG() {
+  return (
+    <div style={{
+      position: "fixed", inset: 0,
+      background: "radial-gradient(ellipse at 30% 60%, #001a40 0%, #000d28 35%, #000818 65%, #000308 100%)",
+      pointerEvents: "none",
+    }} />
+  );
+}
+
 export default function AnimatedShaderBG() {
   const canvasRef = useRef(null);
-  const [tier, setTier] = useState("medium");
+  const [tier, setTier] = useState(null);
 
   useEffect(() => { setTier(detectTier()); }, []);
 
+  if (tier === null) return null;
+  if (tier === "low") return <MobileAnimatedBG />;
+
+  return <AnimatedWebGL canvasRef={canvasRef} tier={tier} />;
+}
+
+function AnimatedWebGL({ canvasRef, tier }) {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const config = CONFIGS[tier];
+    const config = CONFIGS[tier] || CONFIGS["medium"];
     const pr = Math.min(window.devicePixelRatio || 1, config.pixelRatio);
-
-    if (!config.enableShader) {
-      // Mobile CSS gradient: cloud/aurora feel màu xanh đậm
-      canvas.style.background =
-        "radial-gradient(ellipse at 30% 70%, #001a3d 0%, #000d2e 40%, #00071a 75%, #000408 100%)";
-      canvas.width  = window.innerWidth;
-      canvas.height = window.innerHeight;
-      return;
-    }
 
     const gl = canvas.getContext("webgl2");
     if (!gl) return;
@@ -102,8 +110,7 @@ void main(void){
 }`;
 
     const mkShader = (type, src) => {
-      const s = gl.createShader(type);
-      gl.shaderSource(s, src); gl.compileShader(s);
+      const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
       if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { console.error(gl.getShaderInfoLog(s)); return null; }
       return s;
     };
@@ -119,15 +126,13 @@ void main(void){
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,1,-1,-1,1,1,1,-1]), gl.STATIC_DRAW);
     const posLoc = gl.getAttribLocation(prog, "position");
-    gl.enableVertexAttribArray(posLoc);
-    gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(posLoc); gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
 
     const uRes = gl.getUniformLocation(prog, "resolution");
     const uTime = gl.getUniformLocation(prog, "time");
 
     const resize = () => {
-      canvas.width = window.innerWidth * pr;
-      canvas.height = window.innerHeight * pr;
+      canvas.width = window.innerWidth * pr; canvas.height = window.innerHeight * pr;
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.uniform2f(uRes, canvas.width, canvas.height);
     };
@@ -153,7 +158,7 @@ void main(void){
       window.removeEventListener("resize", resize);
       document.removeEventListener("visibilitychange", onVis);
     };
-  }, [tier]);
+  }, []);
 
   return (
     <canvas ref={canvasRef} style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none" }} />
