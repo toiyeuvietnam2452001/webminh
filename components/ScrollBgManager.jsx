@@ -74,14 +74,9 @@ export default function ScrollBgManager() {
       setLayers([{ uid, idx: next, opacity: 1 }]);
     }, ms + 200);
 
-    /* Shader crossfade đồng bộ — fade out → đổi → fade in */
+    /* Khác với cũ: Shader chỉ cần đổi Index để tự CSS crossfade, vì 2 Node đã mount sẵn */
     if (useShader) {
-      setShaderVisible(false);
-      clearTimeout(timerShdr.current);
-      timerShdr.current = setTimeout(() => {
-        setShaderIdx(next);
-        setShaderVisible(true);
-      }, ms * 0.5);
+      setShaderIdx(next);
     }
   };
 
@@ -125,7 +120,7 @@ export default function ScrollBgManager() {
         />
       ))}
 
-      {/* WebGL shader — chỉ desktop, cũng z-index 0 */}
+      {/* WebGL shader — mounted cả 2 tránh compile lag, chuyển qua lại bằng opacity */}
       {useShader && (
         <div
           style={{
@@ -133,14 +128,22 @@ export default function ScrollBgManager() {
             inset: 0,
             zIndex: 0,
             pointerEvents: "none",
-            opacity: shaderVisible ? 1 : 0,
-            transition: `opacity ${ms * 0.5}ms cubic-bezier(0.45, 0, 0.55, 1)`,
           }}
         >
-          {shaderIdx === 0
-            ? <NeuralNoise color={[0.4, 0.1, 0.88]} speed={0.001} />
-            : <AnimatedShaderBG />
-          }
+          <div style={{
+            position: "absolute", inset: 0,
+            opacity: shaderIdx === 0 ? 1 : 0,
+            transition: `opacity ${ms * 0.5}ms cubic-bezier(0.45, 0, 0.55, 1)`,
+          }}>
+            <NeuralNoise isActive={shaderIdx === 0} color={[0.4, 0.1, 0.88]} speed={0.001} />
+          </div>
+          <div style={{
+            position: "absolute", inset: 0,
+            opacity: shaderIdx === 1 ? 1 : 0,
+            transition: `opacity ${ms * 0.5}ms cubic-bezier(0.45, 0, 0.55, 1)`,
+          }}>
+            <AnimatedShaderBG isActive={shaderIdx === 1} />
+          </div>
         </div>
       )}
     </>

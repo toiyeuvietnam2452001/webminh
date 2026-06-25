@@ -50,7 +50,7 @@ function MobileAnimatedBG() {
   );
 }
 
-export default function AnimatedShaderBG() {
+export default function AnimatedShaderBG({ isActive = true }) {
   const canvasRef = useRef(null);
   const [tier, setTier] = useState(null);
 
@@ -59,10 +59,12 @@ export default function AnimatedShaderBG() {
   if (tier === null) return null;
   if (tier === "low") return <MobileAnimatedBG />;
 
-  return <AnimatedWebGL canvasRef={canvasRef} tier={tier} />;
+  return <AnimatedWebGL canvasRef={canvasRef} tier={tier} isActive={isActive} />;
 }
 
-function AnimatedWebGL({ canvasRef, tier }) {
+function AnimatedWebGL({ canvasRef, tier, isActive }) {
+  const activeRef = useRef(isActive);
+  useEffect(() => { activeRef.current = isActive; }, [isActive]);
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -150,6 +152,7 @@ void main(void){
     let animId, last = 0;
     const render = (now = 0) => {
       animId = requestAnimationFrame(render);
+      if (!activeRef.current) return;
       if (now - last < INTERVAL) return;
       last = now;
       gl.uniform1f(uTime, now * 0.001);

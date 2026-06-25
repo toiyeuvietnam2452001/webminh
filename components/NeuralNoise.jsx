@@ -45,7 +45,7 @@ function MobileNeuralBG() {
   );
 }
 
-export default function NeuralNoise({ color = [0.4, 0.1, 0.9], speed = 0.001 }) {
+export default function NeuralNoise({ color = [0.4, 0.1, 0.9], speed = 0.001, isActive = true }) {
   const canvasRef = useRef(null);
   const [tier, setTier] = useState(null);
 
@@ -58,10 +58,12 @@ export default function NeuralNoise({ color = [0.4, 0.1, 0.9], speed = 0.001 }) 
   if (tier === "low") return <MobileNeuralBG />;
 
   // Desktop → WebGL
-  return <NeuralWebGL canvasRef={canvasRef} tier={tier} color={color} speed={speed} />;
+  return <NeuralWebGL canvasRef={canvasRef} tier={tier} color={color} speed={speed} isActive={isActive} />;
 }
 
-function NeuralWebGL({ canvasRef, tier, color, speed }) {
+function NeuralWebGL({ canvasRef, tier, color, speed, isActive }) {
+  const activeRef = useRef(isActive);
+  useEffect(() => { activeRef.current = isActive; }, [isActive]);
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -139,7 +141,9 @@ function NeuralWebGL({ canvasRef, tier, color, speed }) {
 
     const INT = 1000 / config.fps; let id, last = 0;
     const render = (now = 0) => {
-      id = requestAnimationFrame(render); if (now - last < INT) return; last = now;
+      id = requestAnimationFrame(render);
+      if (!activeRef.current) return;
+      if (now - last < INT) return; last = now;
       pointer.x += (pointer.tX - pointer.x) * 0.2; pointer.y += (pointer.tY - pointer.y) * 0.2;
       gl.uniform1f(u.time, now); gl.uniform2f(u.ptr, pointer.x / window.innerWidth, 1 - pointer.y / window.innerHeight);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
