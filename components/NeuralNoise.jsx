@@ -31,7 +31,7 @@ function detectTier() {
 
 const CONFIGS = {
   high: { neuralIter: 15, fps: 60, pixelRatio: 2 },
-  medium: { neuralIter: 10, fps: 30, pixelRatio: 1 },
+  medium: { neuralIter: 10, fps: 60, pixelRatio: 2 },
 };
 
 /* ── Mobile fallback: div thuần CSS ── */

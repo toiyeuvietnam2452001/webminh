@@ -31,7 +31,7 @@ function detectTier() {
 
 const CONFIGS = {
   high: { fbmIter: 5, mainIter: 12, fps: 60, pixelRatio: 2 },
-  medium: { fbmIter: 3, mainIter: 8, fps: 30, pixelRatio: 1 },
+  medium: { fbmIter: 3, mainIter: 8, fps: 60, pixelRatio: 2 },
 };
 
 const VS = `#version 300 es
