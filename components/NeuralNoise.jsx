@@ -3,7 +3,14 @@ import { useEffect, useRef, useState } from "react";
 
 function detectTier() {
   if (typeof window === "undefined") return null;
-  if (/Mobi|Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent)) return "low";
+  const isMobile = /Mobi|Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  if (isMobile) {
+    try {
+      const gl = document.createElement("canvas").getContext("webgl2") || document.createElement("canvas").getContext("webgl");
+      if (gl) return "medium"; // Thiết lập mobile chạy ở cấu hình trung bình cho mượt
+    } catch { }
+    return "low";
+  }
   const cores = navigator.hardwareConcurrency || 4;
   const ram = navigator.deviceMemory;
   try {
@@ -13,7 +20,7 @@ function detectTier() {
     if (ext) {
       const r = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL).toLowerCase();
       if (r.includes("apple")) return "high";
-      if (["geforce","quadro","radeon rx","radeon pro","tesla","arc a"].some(p => r.includes(p))) return "high";
+      if (["geforce", "quadro", "radeon rx", "radeon pro", "tesla", "arc a"].some(p => r.includes(p))) return "high";
       if (r.includes("intel") || r.includes("amd") || r.includes("radeon")) return "medium";
     }
   } catch { return "low"; }
@@ -23,7 +30,7 @@ function detectTier() {
 }
 
 const CONFIGS = {
-  high:   { neuralIter: 15, fps: 60, pixelRatio: 2 },
+  high: { neuralIter: 15, fps: 60, pixelRatio: 2 },
   medium: { neuralIter: 10, fps: 30, pixelRatio: 1 },
 };
 
@@ -109,39 +116,39 @@ function NeuralWebGL({ canvasRef, tier, color, speed }) {
 
     const buf = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,1,1]), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
     gl.useProgram(prog);
     const pos = gl.getAttribLocation(prog, "a_position");
     gl.enableVertexAttribArray(pos); gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
 
     const u = {
-      time: gl.getUniformLocation(prog,"u_time"), ratio: gl.getUniformLocation(prog,"u_ratio"),
-      ptr:  gl.getUniformLocation(prog,"u_pointer_position"), color: gl.getUniformLocation(prog,"u_color"),
-      spd:  gl.getUniformLocation(prog,"u_speed"),
+      time: gl.getUniformLocation(prog, "u_time"), ratio: gl.getUniformLocation(prog, "u_ratio"),
+      ptr: gl.getUniformLocation(prog, "u_pointer_position"), color: gl.getUniformLocation(prog, "u_color"),
+      spd: gl.getUniformLocation(prog, "u_speed"),
     };
     gl.uniform3f(u.color, color[0], color[1], color[2]);
     gl.uniform1f(u.spd, speed);
 
     const resize = () => {
-      canvas.width = window.innerWidth*pr; canvas.height = window.innerHeight*pr;
-      gl.viewport(0,0,canvas.width,canvas.height); gl.uniform1f(u.ratio,canvas.width/canvas.height);
+      canvas.width = window.innerWidth * pr; canvas.height = window.innerHeight * pr;
+      gl.viewport(0, 0, canvas.width, canvas.height); gl.uniform1f(u.ratio, canvas.width / canvas.height);
     };
     resize();
     window.addEventListener("resize", resize);
-    window.addEventListener("pointermove", e => { pointer.tX=e.clientX; pointer.tY=e.clientY; });
+    window.addEventListener("pointermove", e => { pointer.tX = e.clientX; pointer.tY = e.clientY; });
 
-    const INT = 1000/config.fps; let id, last=0;
-    const render = (now=0) => {
-      id=requestAnimationFrame(render); if(now-last<INT)return; last=now;
-      pointer.x+=(pointer.tX-pointer.x)*0.2; pointer.y+=(pointer.tY-pointer.y)*0.2;
-      gl.uniform1f(u.time,now); gl.uniform2f(u.ptr,pointer.x/window.innerWidth,1-pointer.y/window.innerHeight);
-      gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+    const INT = 1000 / config.fps; let id, last = 0;
+    const render = (now = 0) => {
+      id = requestAnimationFrame(render); if (now - last < INT) return; last = now;
+      pointer.x += (pointer.tX - pointer.x) * 0.2; pointer.y += (pointer.tY - pointer.y) * 0.2;
+      gl.uniform1f(u.time, now); gl.uniform2f(u.ptr, pointer.x / window.innerWidth, 1 - pointer.y / window.innerHeight);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     };
-    id=requestAnimationFrame(render);
-    const onVis=()=>{ if(document.hidden)cancelAnimationFrame(id); else id=requestAnimationFrame(render); };
-    document.addEventListener("visibilitychange",onVis);
-    return ()=>{ cancelAnimationFrame(id); window.removeEventListener("resize",resize); document.removeEventListener("visibilitychange",onVis); };
+    id = requestAnimationFrame(render);
+    const onVis = () => { if (document.hidden) cancelAnimationFrame(id); else id = requestAnimationFrame(render); };
+    document.addEventListener("visibilitychange", onVis);
+    return () => { cancelAnimationFrame(id); window.removeEventListener("resize", resize); document.removeEventListener("visibilitychange", onVis); };
   }, []);
 
-  return <canvas ref={canvasRef} style={{position:"fixed",top:0,left:0,width:"100%",height:"100%",pointerEvents:"none"}}/>;
+  return <canvas ref={canvasRef} style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none" }} />;
 }

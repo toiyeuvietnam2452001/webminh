@@ -3,7 +3,14 @@ import { useEffect, useRef, useState } from "react";
 
 function detectTier() {
   if (typeof window === "undefined") return null;
-  if (/Mobi|Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent)) return "low";
+  const isMobile = /Mobi|Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  if (isMobile) {
+    try {
+      const gl = document.createElement("canvas").getContext("webgl2");
+      if (gl) return "medium"; // Mobile có WebGL2 gánh tốt ở medium
+    } catch { }
+    return "low";
+  }
   const cores = navigator.hardwareConcurrency || 4;
   const ram = navigator.deviceMemory;
   try {
@@ -13,7 +20,7 @@ function detectTier() {
     if (ext) {
       const r = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL).toLowerCase();
       if (r.includes("apple")) return "high";
-      if (["geforce","quadro","radeon rx","radeon pro","tesla","arc a"].some(p => r.includes(p))) return "high";
+      if (["geforce", "quadro", "radeon rx", "radeon pro", "tesla", "arc a"].some(p => r.includes(p))) return "high";
       if (r.includes("intel") || r.includes("amd") || r.includes("radeon")) return "medium";
     }
   } catch { return "low"; }
@@ -23,8 +30,8 @@ function detectTier() {
 }
 
 const CONFIGS = {
-  high:   { fbmIter: 5,  mainIter: 12, fps: 60, pixelRatio: 2 },
-  medium: { fbmIter: 3,  mainIter: 8,  fps: 30, pixelRatio: 1 },
+  high: { fbmIter: 5, mainIter: 12, fps: 60, pixelRatio: 2 },
+  medium: { fbmIter: 3, mainIter: 8, fps: 30, pixelRatio: 1 },
 };
 
 const VS = `#version 300 es
@@ -124,7 +131,7 @@ void main(void){
 
     const buf = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,1,-1,-1,1,1,1,-1]), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, 1, -1, -1, 1, 1, 1, -1]), gl.STATIC_DRAW);
     const posLoc = gl.getAttribLocation(prog, "position");
     gl.enableVertexAttribArray(posLoc); gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
 

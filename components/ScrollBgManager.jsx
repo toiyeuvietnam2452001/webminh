@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
 
-const NeuralNoise      = dynamic(() => import("./NeuralNoise"),      { ssr: false });
+const NeuralNoise = dynamic(() => import("./NeuralNoise"), { ssr: false });
 const AnimatedShaderBG = dynamic(() => import("./AnimatedShaderBG"), { ssr: false });
 
 /*
@@ -41,27 +41,27 @@ function getMs() {
 
 export default function ScrollBgManager() {
   /* Luôn render ngay — không có null */
-  const [layers, setLayers]   = useState([{ uid: 0, idx: 0, opacity: 1 }]);
-  const [shaderIdx, setShaderIdx]     = useState(0);
+  const [layers, setLayers] = useState([{ uid: 0, idx: 0, opacity: 1 }]);
+  const [shaderIdx, setShaderIdx] = useState(0);
   const [shaderVisible, setShaderVisible] = useState(true);
-  const [useShader, setUseShader]     = useState(false);
+  const [useShader, setUseShader] = useState(false);
 
   const activeRef = useRef(0);
-  const uidRef    = useRef(1);
-  const timerCSS  = useRef(null);
+  const uidRef = useRef(1);
+  const timerCSS = useRef(null);
   const timerShdr = useRef(null);
-  const msRef     = useRef(900);
+  const msRef = useRef(900);
 
   useEffect(() => {
     msRef.current = getMs();
-    /* Chỉ dùng shader trên desktop có WebGL2 */
-    if (!isMobileDevice() && canWebGL2()) setUseShader(true);
+    /* Cả desktop/mobile đều dùng shader nếu hỗ trợ WebGL2 */
+    if (canWebGL2()) setUseShader(true);
   }, []);
 
   const crossfadeTo = (next) => {
     if (next === activeRef.current) return;
     activeRef.current = next;
-    const ms  = msRef.current;
+    const ms = msRef.current;
     const uid = uidRef.current++;
 
     /* CSS crossfade */
