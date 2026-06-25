@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 
 function detectTier() {
-  if (typeof window === "undefined") return "medium";
+  if (typeof window === "undefined") return null;
   if (/Mobi|Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent)) return "low";
   const cores = navigator.hardwareConcurrency || 4;
   const ram = navigator.deviceMemory;
@@ -21,31 +21,45 @@ function detectTier() {
   if (cores >= 8 || (ram && ram >= 8)) return "high";
   return "medium";
 }
+
 const CONFIGS = {
-  high:   { enableShader: true,  neuralIter: 15, fps: 60, pixelRatio: 2 },
-  medium: { enableShader: true,  neuralIter: 10, fps: 30, pixelRatio: 1 },
-  low:    { enableShader: false, neuralIter: 0,  fps: 0,  pixelRatio: 1 },
+  high:   { neuralIter: 15, fps: 60, pixelRatio: 2 },
+  medium: { neuralIter: 10, fps: 30, pixelRatio: 1 },
 };
+
+/* ── Mobile fallback: div thuần CSS ── */
+function MobileNeuralBG() {
+  return (
+    <div style={{
+      position: "fixed", inset: 0,
+      background: "radial-gradient(ellipse at 65% 35%, #3a0080 0%, #1a0050 30%, #080018 65%, #020008 100%)",
+      pointerEvents: "none",
+    }} />
+  );
+}
 
 export default function NeuralNoise({ color = [0.4, 0.1, 0.9], speed = 0.001 }) {
   const canvasRef = useRef(null);
-  const [tier, setTier] = useState("medium");
+  const [tier, setTier] = useState(null);
+
   useEffect(() => { setTier(detectTier()); }, []);
 
+  // Chờ detect xong
+  if (tier === null) return null;
+
+  // Mobile/máy yếu → div CSS gradient tím đẹp
+  if (tier === "low") return <MobileNeuralBG />;
+
+  // Desktop → WebGL
+  return <NeuralWebGL canvasRef={canvasRef} tier={tier} color={color} speed={speed} />;
+}
+
+function NeuralWebGL({ canvasRef, tier, color, speed }) {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const config = CONFIGS[tier];
     const pr = Math.min(window.devicePixelRatio || 1, config.pixelRatio);
-
-    // Mobile/máy yếu → CSS gradient tím đẹp thay WebGL
-    if (!config.enableShader) {
-      canvas.style.background =
-        "radial-gradient(ellipse at 60% 40%, #3a0080 0%, #1a0050 35%, #08001a 70%, #030008 100%)";
-      canvas.width  = window.innerWidth;
-      canvas.height = window.innerHeight;
-      return;
-    }
 
     const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
     if (!gl) return;
@@ -53,33 +67,28 @@ export default function NeuralNoise({ color = [0.4, 0.1, 0.9], speed = 0.001 }) 
     const ITER = config.neuralIter;
     const pointer = { x: 0.5, y: 0.5, tX: 0.5, tY: 0.5 };
 
-    const vsSource = `
-      precision mediump float;
-      varying vec2 vUv;
-      attribute vec2 a_position;
-      void main() { vUv = 0.5 * (a_position + 1.0); gl_Position = vec4(a_position, 0.0, 1.0); }
-    `;
+    const vsSource = `precision mediump float;varying vec2 vUv;attribute vec2 a_position;void main(){vUv=0.5*(a_position+1.0);gl_Position=vec4(a_position,0.0,1.0);}`;
     const fsSource = `
       precision mediump float;
       varying vec2 vUv;
       uniform float u_time,u_ratio,u_speed;
       uniform vec2 u_pointer_position;
       uniform vec3 u_color;
-      vec2 rotate(vec2 uv, float th) { return mat2(cos(th),sin(th),-sin(th),cos(th))*uv; }
-      float neuro_shape(vec2 uv, float t, float p) {
+      vec2 rot(vec2 uv,float th){return mat2(cos(th),sin(th),-sin(th),cos(th))*uv;}
+      float shape(vec2 uv,float t,float p){
         vec2 sa=vec2(0),res=vec2(0);float sc=8.0;
         for(int j=0;j<${ITER};j++){
-          uv=rotate(uv,1.0);sa=rotate(sa,1.0);
+          uv=rot(uv,1.0);sa=rot(sa,1.0);
           vec2 l=uv*sc+float(j)+sa-t;
           sa+=sin(l)+2.4*p;res+=(0.5+0.5*cos(l))/sc;sc*=1.2;
         }
         return res.x+res.y;
       }
-      void main() {
+      void main(){
         vec2 uv=0.5*vUv;uv.x*=u_ratio;
         vec2 pt=vUv-u_pointer_position;pt.x*=u_ratio;
         float p=0.5*pow(1.0-clamp(length(pt),0.0,1.0),2.0);
-        float n=neuro_shape(uv,u_speed*u_time,p);
+        float n=shape(uv,u_speed*u_time,p);
         n=1.2*pow(n,3.0)+pow(n,10.0);
         n=max(0.0,n-0.5)*(1.0-length(vUv-0.5));
         gl_FragColor=vec4(u_color*n,n);
@@ -106,52 +115,33 @@ export default function NeuralNoise({ color = [0.4, 0.1, 0.9], speed = 0.001 }) 
     gl.enableVertexAttribArray(pos); gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
 
     const u = {
-      time:    gl.getUniformLocation(prog, "u_time"),
-      ratio:   gl.getUniformLocation(prog, "u_ratio"),
-      pointer: gl.getUniformLocation(prog, "u_pointer_position"),
-      color:   gl.getUniformLocation(prog, "u_color"),
-      speed:   gl.getUniformLocation(prog, "u_speed"),
+      time: gl.getUniformLocation(prog,"u_time"), ratio: gl.getUniformLocation(prog,"u_ratio"),
+      ptr:  gl.getUniformLocation(prog,"u_pointer_position"), color: gl.getUniformLocation(prog,"u_color"),
+      spd:  gl.getUniformLocation(prog,"u_speed"),
     };
     gl.uniform3f(u.color, color[0], color[1], color[2]);
-    gl.uniform1f(u.speed, speed);
+    gl.uniform1f(u.spd, speed);
 
     const resize = () => {
-      canvas.width = window.innerWidth * pr; canvas.height = window.innerHeight * pr;
-      gl.viewport(0, 0, canvas.width, canvas.height);
-      gl.uniform1f(u.ratio, canvas.width / canvas.height);
+      canvas.width = window.innerWidth*pr; canvas.height = window.innerHeight*pr;
+      gl.viewport(0,0,canvas.width,canvas.height); gl.uniform1f(u.ratio,canvas.width/canvas.height);
     };
     resize();
     window.addEventListener("resize", resize);
-    window.addEventListener("pointermove", e => { pointer.tX = e.clientX; pointer.tY = e.clientY; });
-    window.addEventListener("touchmove", e => {
-      if (e.targetTouches[0]) { pointer.tX = e.targetTouches[0].clientX; pointer.tY = e.targetTouches[0].clientY; }
-    });
+    window.addEventListener("pointermove", e => { pointer.tX=e.clientX; pointer.tY=e.clientY; });
 
-    const INTERVAL = 1000 / config.fps;
-    let animId, last = 0;
-    const render = (now = 0) => {
-      animId = requestAnimationFrame(render);
-      if (now - last < INTERVAL) return;
-      last = now;
-      pointer.x += (pointer.tX - pointer.x) * 0.2;
-      pointer.y += (pointer.tY - pointer.y) * 0.2;
-      gl.uniform1f(u.time, now);
-      gl.uniform2f(u.pointer, pointer.x / window.innerWidth, 1 - pointer.y / window.innerHeight);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    const INT = 1000/config.fps; let id, last=0;
+    const render = (now=0) => {
+      id=requestAnimationFrame(render); if(now-last<INT)return; last=now;
+      pointer.x+=(pointer.tX-pointer.x)*0.2; pointer.y+=(pointer.tY-pointer.y)*0.2;
+      gl.uniform1f(u.time,now); gl.uniform2f(u.ptr,pointer.x/window.innerWidth,1-pointer.y/window.innerHeight);
+      gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
     };
-    animId = requestAnimationFrame(render);
+    id=requestAnimationFrame(render);
+    const onVis=()=>{ if(document.hidden)cancelAnimationFrame(id); else id=requestAnimationFrame(render); };
+    document.addEventListener("visibilitychange",onVis);
+    return ()=>{ cancelAnimationFrame(id); window.removeEventListener("resize",resize); document.removeEventListener("visibilitychange",onVis); };
+  }, []);
 
-    const onVis = () => { if (document.hidden) cancelAnimationFrame(animId); else animId = requestAnimationFrame(render); };
-    document.addEventListener("visibilitychange", onVis);
-
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", resize);
-      document.removeEventListener("visibilitychange", onVis);
-    };
-  }, [tier]);
-
-  return (
-    <canvas ref={canvasRef} style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none" }} />
-  );
+  return <canvas ref={canvasRef} style={{position:"fixed",top:0,left:0,width:"100%",height:"100%",pointerEvents:"none"}}/>;
 }
