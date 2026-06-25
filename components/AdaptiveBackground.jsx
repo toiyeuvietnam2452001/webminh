@@ -7,23 +7,19 @@ const SmartBackground  = dynamic(() => import("./SmartBackground"),  { ssr: fals
 
 function detectCapability() {
   try {
-    // Mobile/tablet → SmartBackground Canvas 2D (ổn định, mượt trên mọi điện thoại)
-    if (/Mobi|Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-      return "canvas2d";
-    }
-
     // Phải support WebGL2
     const gl = document.createElement("canvas").getContext("webgl2");
-    if (!gl) return "canvas2d";
+    if (!gl) return "canvas2d"; // Không có WebGL2 → SmartBackground
 
     // CPU cores tối thiểu 4
     const cores = navigator.hardwareConcurrency || 2;
     if (cores < 4) return "canvas2d";
 
-    // RAM tối thiểu 4GB (chỉ Chrome/Edge có API này)
+    // RAM tối thiểu 4GB (chỉ Chrome/Edge)
     const memory = navigator.deviceMemory;
     if (memory !== undefined && memory < 4) return "canvas2d";
 
+    // Mobile/Desktop đều dùng ScrollBgManager nếu đủ điều kiện
     return "webgl";
   } catch (e) {
     return "canvas2d";
@@ -39,6 +35,7 @@ export default function AdaptiveBackground() {
 
   if (!mode) return null;
 
+  // ScrollBgManager chạy cả desktop lẫn mobile (shader tự detect và dùng CSS fallback)
   return mode === "webgl"
     ? <ScrollBgManager />
     : <SmartBackground />;
