@@ -7,18 +7,18 @@ import AuroraShaderBG from "./AuroraShaderBG";
 
 /* ─── Projects ─── */
 const projects = [
-  { name: "Vinhomes Green Paradise\nVinhomes Cần Giờ",   image: "/projects/vinhomes-can-gio.jpg" },
-  { name: "Ecopark Hưng Yên",                             image: "/projects/ecopark-hung-yen.jpg" },
-  { name: "Empire City",                                   image: "/projects/empire-city.jpg" },
+  { name: "Vinhomes Green Paradise\nVinhomes Cần Giờ", image: "/projects/vinhomes-can-gio.jpg" },
+  { name: "Ecopark Hưng Yên", image: "/projects/ecopark-hung-yen.jpg" },
+  { name: "Empire City", image: "/projects/empire-city.jpg" },
   { name: "Vinhomes Global Gate\nVinhomes Hạ Long Xanh", image: "/projects/vinhomes-ha-long.jpg" },
-  { name: "The Metropole Thủ Thiêm",                      image: "/projects/metropole-thu-thiem.jpg" },
-  { name: "Masteri Cao Xà Lá",                            image: "/projects/masteri-cao-xa-la.jpg" },
-  { name: "Blanca City",                                   image: "/projects/blanca-city.jpg" },
-  { name: "The Global City",                               image: "/projects/the-global-city.jpg" },
-  { name: "Charmora City",                                 image: "/projects/charmora-city.jpg" },
-  { name: "Vinhomes Hải Vân Bay",                         image: "/projects/vinhomes-hai-van-bay.jpg" },
-  { name: "Capital Square",                                image: "/projects/capital-square.jpg" },
-  { name: "Eco Retreat",                                   image: "/projects/eco-retreat.jpg" },
+  { name: "The Metropole Thủ Thiêm", image: "/projects/metropole-thu-thiem.jpg" },
+  { name: "Masteri Cao Xà Lá", image: "/projects/masteri-cao-xa-la.jpg" },
+  { name: "Blanca City", image: "/projects/blanca-city.jpg" },
+  { name: "The Global City", image: "/projects/the-global-city.jpg" },
+  { name: "Charmora City", image: "/projects/charmora-city.jpg" },
+  { name: "Vinhomes Hải Vân Bay", image: "/projects/vinhomes-hai-van-bay.jpg" },
+  { name: "Capital Square", image: "/projects/capital-square.jpg" },
+  { name: "Eco Retreat", image: "/projects/eco-retreat.jpg" },
 ];
 
 function ProjectCard({ name, image }) {
@@ -67,26 +67,16 @@ function ProjectCard({ name, image }) {
 
 
 
-/* ── Blur Stagger Text Effect ── */
+/* ── Stagger Text Effect (Optimized) ── */
 function BlurredStaggerParagraphs({ paragraphs }) {
-  const variants = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1 },
-  };
-
-  const letterAnim = {
-    hidden: { opacity: 0, filter: "blur(10px)" },
-    show:   { opacity: 1, filter: "blur(0px)", transition: { duration: 0.3 } },
-  };
-
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "18px", width: "100%" }}>
       {paragraphs.map((text, i) => (
         <motion.div
           key={i}
-          variants={variants}
-          initial="hidden"
-          whileInView="show"
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: i * 0.15 }}
           viewport={{ once: true, amount: 0.2 }}
           style={{ width: "100%" }}
         >
@@ -95,18 +85,7 @@ function BlurredStaggerParagraphs({ paragraphs }) {
             fontSize: "0.97rem", margin: 0,
             width: "100%", display: "block",
           }}>
-            {text.split("").map((char, j) => (
-              <motion.span
-                key={j}
-                initial={{ opacity: 0, filter: "blur(10px)" }}
-                whileInView={{ opacity: 1, filter: "blur(0px)" }}
-                transition={{ duration: 0.3, delay: i * 0.4 + j * 0.012 }}
-                viewport={{ once: true }}
-                style={{ display: "inline" }}
-              >
-                {char}
-              </motion.span>
-            ))}
+            {text}
           </p>
         </motion.div>
       ))}
@@ -275,8 +254,8 @@ export default function AboutSection() {
             marginBottom: "28px", fontSize: "13px", color: "#4da6ff", fontWeight: 500,
           }}>
             <svg width="15" height="15" viewBox="0 0 32 32" fill="none">
-              <path d="M5 16C5 10.5 9 6 14 6C17.5 6 20 8.5 22.5 12L16 16L22.5 20C20 23.5 17.5 26 14 26C9 26 5 21.5 5 16Z" fill="#4da6ff"/>
-              <path d="M27 16C27 21.5 23 26 18 26C14.5 26 12 23.5 9.5 20L16 16L9.5 12C12 8.5 14.5 6 18 6C23 6 27 10.5 27 16Z" fill="#4da6ff"/>
+              <path d="M5 16C5 10.5 9 6 14 6C17.5 6 20 8.5 22.5 12L16 16L22.5 20C20 23.5 17.5 26 14 26C9 26 5 21.5 5 16Z" fill="#4da6ff" />
+              <path d="M27 16C27 21.5 23 26 18 26C14.5 26 12 23.5 9.5 20L16 16L9.5 12C12 8.5 14.5 6 18 6C23 6 27 10.5 27 16Z" fill="#4da6ff" />
             </svg>
             Meta Business Partner
           </div>
