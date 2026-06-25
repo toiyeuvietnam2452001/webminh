@@ -46,7 +46,11 @@ export default function AnimatedShaderBG() {
     const pr = Math.min(window.devicePixelRatio || 1, config.pixelRatio);
 
     if (!config.enableShader) {
-      canvas.style.background = "linear-gradient(135deg, #000814 0%, #001845 50%, #002855 100%)";
+      // Mobile CSS gradient: cloud/aurora feel màu xanh đậm
+      canvas.style.background =
+        "radial-gradient(ellipse at 30% 70%, #001a3d 0%, #000d2e 40%, #00071a 75%, #000408 100%)";
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
       return;
     }
 
