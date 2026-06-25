@@ -10,16 +10,22 @@ import AdaptiveBackground from "@/components/AdaptiveBackground";
 export default function Home() {
   return (
     <>
+      {/* Background layers — z-index 0, luôn sau content */}
       <AdaptiveBackground />
-      <Navbar />
-      <main>
-        <Hero />
-        <Clients />
-        <Features />
-        <HowItWorks />
-        <Pricing />
-      </main>
-      <Footer />
+
+      {/* Content wrapper — z-index 1, luôn TRƯỚC background */}
+      {/* Đảm bảo KHÔNG BAO GIỜ bị che bởi background dù đang transition */}
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <Navbar />
+        <main>
+          <Hero />
+          <Clients />
+          <Features />
+          <HowItWorks />
+          <Pricing />
+        </main>
+        <Footer />
+      </div>
     </>
   );
 }
