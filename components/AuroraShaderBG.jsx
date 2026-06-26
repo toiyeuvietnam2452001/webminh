@@ -15,7 +15,7 @@ function detectTier() {
     if (ext) {
       const r = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL).toLowerCase();
       if (r.includes("apple")) return "high";
-      if (["geforce","quadro","radeon rx","radeon pro","tesla","arc a"].some(p => r.includes(p))) return "high";
+      if (["geforce", "quadro", "radeon rx", "radeon pro", "tesla", "arc a"].some(p => r.includes(p))) return "high";
       if (r.includes("intel") || r.includes("amd") || r.includes("radeon")) return "medium";
     }
   } catch { return "low"; }
@@ -24,9 +24,9 @@ function detectTier() {
   return "medium";
 }
 const CONFIGS = {
-  high:   { enableShader: true,  iterations: 35, octaves: 3, fps: 60, pixelRatio: 2 },
-  medium: { enableShader: true,  iterations: 20, octaves: 2, fps: 30, pixelRatio: 1 },
-  low:    { enableShader: false, iterations: 0,  octaves: 0, fps: 0,  pixelRatio: 1 },
+  high: { enableShader: true, iterations: 15, octaves: 2, fps: 60, pixelRatio: 1 },
+  medium: { enableShader: true, iterations: 10, octaves: 1, fps: 30, pixelRatio: 1 },
+  low: { enableShader: false, iterations: 0, octaves: 0, fps: 0, pixelRatio: 1 },
 };
 
 export default function AuroraShaderBG() {
@@ -116,7 +116,7 @@ export default function AuroraShaderBG() {
 
     const onVis = () => { if (document.hidden) cancelAnimationFrame(frameId); else frameId = requestAnimationFrame(animate); };
     document.addEventListener("visibilitychange", onVis);
-    const onResize = () => { const w2=container.offsetWidth,h2=container.offsetHeight; renderer.setSize(w2,h2); material.uniforms.iResolution.value.set(w2,h2); };
+    const onResize = () => { const w2 = container.offsetWidth, h2 = container.offsetHeight; renderer.setSize(w2, h2); material.uniforms.iResolution.value.set(w2, h2); };
     window.addEventListener("resize", onResize);
 
     return () => {

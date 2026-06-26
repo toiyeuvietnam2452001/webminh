@@ -147,14 +147,12 @@ function MetaPartnerCard() {
         <motion.div style={{
           position: "absolute", bottom: 0, left: 0, right: 0, height: "66%", zIndex: 20,
           background: "radial-gradient(ellipse at bottom right, rgba(172,92,255,0.7) -10%, rgba(79,70,229,0) 70%), radial-gradient(ellipse at bottom left, rgba(56,189,248,0.7) -10%, rgba(79,70,229,0) 70%)",
-          filter: "blur(40px)",
         }} animate={{ opacity: isHovered ? 0.9 : 0.8 }} transition={{ duration: 0.4 }} />
 
         {/* Central purple glow */}
         <motion.div style={{
           position: "absolute", bottom: 0, left: 0, right: 0, height: "66%", zIndex: 21,
           background: "radial-gradient(circle at bottom center, rgba(161,58,229,0.7) -20%, rgba(79,70,229,0) 60%)",
-          filter: "blur(45px)",
         }} animate={{ opacity: isHovered ? 0.85 : 0.75 }} transition={{ duration: 0.4 }} />
 
         {/* Bottom border glow */}
