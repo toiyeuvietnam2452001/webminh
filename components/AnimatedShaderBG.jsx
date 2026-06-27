@@ -3,28 +3,30 @@ import { useEffect, useRef, useState } from "react";
 
 function detectTier() {
   if (typeof window === "undefined") return null;
-  if (/Mobi|Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent)) return "low";
-  const cores = navigator.hardwareConcurrency || 4;
-  const ram = navigator.deviceMemory;
+  const isMob = /Mobi|Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent);
   try {
     const gl = document.createElement("canvas").getContext("webgl2");
-    if (!gl) return "low";
+    if (!gl) return "low"; // WebGL2 không có → CSS fallback
+    if (isMob) return "mobile"; // Mobile có WebGL2 → dùng settings nhẹ
     const ext = gl.getExtension("WEBGL_debug_renderer_info");
     if (ext) {
       const r = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL).toLowerCase();
       if (r.includes("apple")) return "high";
-      if (["geforce","quadro","radeon rx","radeon pro","tesla","arc a"].some(p => r.includes(p))) return "high";
-      if (r.includes("intel") || r.includes("amd") || r.includes("radeon")) return "medium";
+      if (["geforce","quadro","radeon rx","radeon pro","tesla","arc a"].some(p=>r.includes(p))) return "high";
+      if (r.includes("intel")||r.includes("amd")||r.includes("radeon")) return "medium";
     }
+    const cores = navigator.hardwareConcurrency||4;
+    const ram   = navigator.deviceMemory;
+    if (cores<=2||(ram&&ram<=2)) return "low";
+    if (cores>=8||(ram&&ram>=8)) return "high";
   } catch { return "low"; }
-  if (cores <= 2 || (ram && ram <= 2)) return "low";
-  if (cores >= 8 || (ram && ram >= 8)) return "high";
   return "medium";
 }
 
 const CONFIGS = {
-  high:   { fbmIter: 5,  mainIter: 12, fps: 60, pixelRatio: 2 },
-  medium: { fbmIter: 3,  mainIter: 8,  fps: 30, pixelRatio: 1 },
+  high:   { fbmIter:5, mainIter:12, fps:60, pixelRatio:2 },
+  medium: { fbmIter:3, mainIter:8,  fps:30, pixelRatio:1 },
+  mobile: { fbmIter:2, mainIter:5,  fps:30, pixelRatio:1 },
 };
 
 const VS = `#version 300 es
@@ -32,26 +34,16 @@ precision highp float;
 in vec4 position;
 void main(){ gl_Position = position; }`;
 
-/* ── Mobile fallback: div thuần CSS ── */
 function MobileAnimatedBG() {
-  return (
-    <div style={{
-      position: "fixed", inset: 0,
-      background: "radial-gradient(ellipse at 40% 55%, #001a4d 0%, #000d2e 35%, #00061a 65%, #000308 100%)",
-      pointerEvents: "none",
-    }} />
-  );
+  return <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse at 40% 55%, #001a4d 0%, #000d2e 35%, #00061a 65%, #000308 100%)", pointerEvents:"none" }} />;
 }
 
 export default function AnimatedShaderBG() {
   const canvasRef = useRef(null);
   const [tier, setTier] = useState(null);
-
   useEffect(() => { setTier(detectTier()); }, []);
-
   if (tier === null) return null;
   if (tier === "low") return <MobileAnimatedBG />;
-
   return <AnimatedWebGL canvasRef={canvasRef} tier={tier} />;
 }
 
@@ -60,14 +52,10 @@ function AnimatedWebGL({ canvasRef, tier }) {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const config = CONFIGS[tier] || CONFIGS["medium"];
-    const pr = Math.min(window.devicePixelRatio || 1, config.pixelRatio);
-
+    const pr = Math.min(window.devicePixelRatio||1, config.pixelRatio);
     const gl = canvas.getContext("webgl2");
     if (!gl) return;
-
-    const FBM = config.fbmIter;
-    const MAIN = config.mainIter;
-
+    const FBM=config.fbmIter, MAIN=config.mainIter;
     const FS = `#version 300 es
 precision highp float;
 out vec4 O;
@@ -108,59 +96,26 @@ void main(void){
   }
   O=vec4(col,1);
 }`;
-
-    const mkShader = (type, src) => {
-      const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
-      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { console.error(gl.getShaderInfoLog(s)); return null; }
-      return s;
-    };
-    const vs = mkShader(gl.VERTEX_SHADER, VS);
-    const fs = mkShader(gl.FRAGMENT_SHADER, FS);
-    if (!vs || !fs) return;
-
-    const prog = gl.createProgram();
-    gl.attachShader(prog, vs); gl.attachShader(prog, fs);
-    gl.linkProgram(prog); gl.useProgram(prog);
-
-    const buf = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,1,-1,-1,1,1,1,-1]), gl.STATIC_DRAW);
-    const posLoc = gl.getAttribLocation(prog, "position");
-    gl.enableVertexAttribArray(posLoc); gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
-
-    const uRes = gl.getUniformLocation(prog, "resolution");
-    const uTime = gl.getUniformLocation(prog, "time");
-
-    const resize = () => {
-      canvas.width = window.innerWidth * pr; canvas.height = window.innerHeight * pr;
-      gl.viewport(0, 0, canvas.width, canvas.height);
-      gl.uniform2f(uRes, canvas.width, canvas.height);
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    const INTERVAL = 1000 / config.fps;
-    let animId, last = 0;
-    const render = (now = 0) => {
-      animId = requestAnimationFrame(render);
-      if (now - last < INTERVAL) return;
-      last = now;
-      gl.uniform1f(uTime, now * 0.001);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    };
-    animId = requestAnimationFrame(render);
-
-    const onVis = () => { if (document.hidden) cancelAnimationFrame(animId); else animId = requestAnimationFrame(render); };
-    document.addEventListener("visibilitychange", onVis);
-
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", resize);
-      document.removeEventListener("visibilitychange", onVis);
-    };
-  }, []);
-
-  return (
-    <canvas ref={canvasRef} style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none" }} />
-  );
+    const mkS=(type,src)=>{ const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);return gl.getShaderParameter(s,gl.COMPILE_STATUS)?s:null; };
+    const vs=mkS(gl.VERTEX_SHADER,VS), fs=mkS(gl.FRAGMENT_SHADER,FS);
+    if(!vs||!fs) return;
+    const prog=gl.createProgram();
+    gl.attachShader(prog,vs);gl.attachShader(prog,fs);gl.linkProgram(prog);gl.useProgram(prog);
+    const buf=gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,1,-1,-1,1,1,1,-1]),gl.STATIC_DRAW);
+    const posLoc=gl.getAttribLocation(prog,"position");
+    gl.enableVertexAttribArray(posLoc);gl.vertexAttribPointer(posLoc,2,gl.FLOAT,false,0,0);
+    const uRes=gl.getUniformLocation(prog,"resolution");
+    const uTime=gl.getUniformLocation(prog,"time");
+    const resize=()=>{ canvas.width=window.innerWidth*pr;canvas.height=window.innerHeight*pr;gl.viewport(0,0,canvas.width,canvas.height);gl.uniform2f(uRes,canvas.width,canvas.height); };
+    resize(); window.addEventListener("resize",resize);
+    const INT=1000/config.fps; let animId,last=0;
+    const render=(now=0)=>{ animId=requestAnimationFrame(render);if(now-last<INT)return;last=now;gl.uniform1f(uTime,now*0.001);gl.drawArrays(gl.TRIANGLE_STRIP,0,4); };
+    animId=requestAnimationFrame(render);
+    const onVis=()=>{ if(document.hidden)cancelAnimationFrame(animId);else animId=requestAnimationFrame(render); };
+    document.addEventListener("visibilitychange",onVis);
+    return ()=>{ cancelAnimationFrame(animId);window.removeEventListener("resize",resize);document.removeEventListener("visibilitychange",onVis); };
+  },[]);
+  return <canvas ref={canvasRef} style={{position:"fixed",top:0,left:0,width:"100%",height:"100%",pointerEvents:"none"}}/>;
 }
