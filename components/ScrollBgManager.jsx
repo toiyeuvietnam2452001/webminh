@@ -16,8 +16,8 @@ const AnimatedShaderBG = dynamic(() => import("./AnimatedShaderBG"), { ssr: fals
 */
 
 const CSS_BG = [
-  "radial-gradient(ellipse at 55% 38%, #00857a 0%, #004d45 38%, #001f1a 72%, #000a08 100%)",
-  "radial-gradient(ellipse at 42% 55%, #004a70 0%, #002545 40%, #001025 72%, #000810 100%)",
+  "radial-gradient(ellipse at 55% 38%, #00a8d4 0%, #004d70 38%, #001a28 72%, #000810 100%)",
+  "radial-gradient(ellipse at 42% 55%, #001a4d 0%, #000d2e 40%, #00061a 72%, #000308 100%)",
 ];
 
 function isMobileDevice() {
@@ -138,7 +138,7 @@ export default function ScrollBgManager() {
           }}
         >
           {shaderIdx === 0
-            ? <NeuralNoise color={[0.0, 0.65, 0.55]} speed={0.001} />
+            ? <NeuralNoise color={[0.0, 0.72, 1.0]} speed={0.001} />
             : <AnimatedShaderBG />
           }
         </div>
