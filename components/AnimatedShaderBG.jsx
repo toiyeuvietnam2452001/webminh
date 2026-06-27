@@ -3,14 +3,7 @@ import { useEffect, useRef, useState } from "react";
 
 function detectTier() {
   if (typeof window === "undefined") return null;
-  const isMobile = /Mobi|Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  if (isMobile) {
-    try {
-      const gl = document.createElement("canvas").getContext("webgl2");
-      if (gl) return "medium"; // Mobile có WebGL2 gánh tốt ở medium
-    } catch { }
-    return "low";
-  }
+  if (/Mobi|Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent)) return "low";
   const cores = navigator.hardwareConcurrency || 4;
   const ram = navigator.deviceMemory;
   try {
@@ -20,7 +13,7 @@ function detectTier() {
     if (ext) {
       const r = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL).toLowerCase();
       if (r.includes("apple")) return "high";
-      if (["geforce", "quadro", "radeon rx", "radeon pro", "tesla", "arc a"].some(p => r.includes(p))) return "high";
+      if (["geforce","quadro","radeon rx","radeon pro","tesla","arc a"].some(p => r.includes(p))) return "high";
       if (r.includes("intel") || r.includes("amd") || r.includes("radeon")) return "medium";
     }
   } catch { return "low"; }
@@ -30,8 +23,8 @@ function detectTier() {
 }
 
 const CONFIGS = {
-  high: { fbmIter: 5, mainIter: 12, fps: 60, pixelRatio: 2 },
-  medium: { fbmIter: 3, mainIter: 8, fps: 60, pixelRatio: 2 },
+  high:   { fbmIter: 5,  mainIter: 12, fps: 60, pixelRatio: 2 },
+  medium: { fbmIter: 3,  mainIter: 8,  fps: 30, pixelRatio: 1 },
 };
 
 const VS = `#version 300 es
@@ -44,13 +37,13 @@ function MobileAnimatedBG() {
   return (
     <div style={{
       position: "fixed", inset: 0,
-      background: "radial-gradient(ellipse at 30% 60%, #001a40 0%, #000d28 35%, #000818 65%, #000308 100%)",
+      background: "radial-gradient(ellipse at 40% 55%, #001a4d 0%, #000d2e 35%, #00061a 65%, #000308 100%)",
       pointerEvents: "none",
     }} />
   );
 }
 
-export default function AnimatedShaderBG({ isActive = true }) {
+export default function AnimatedShaderBG() {
   const canvasRef = useRef(null);
   const [tier, setTier] = useState(null);
 
@@ -59,12 +52,10 @@ export default function AnimatedShaderBG({ isActive = true }) {
   if (tier === null) return null;
   if (tier === "low") return <MobileAnimatedBG />;
 
-  return <AnimatedWebGL canvasRef={canvasRef} tier={tier} isActive={isActive} />;
+  return <AnimatedWebGL canvasRef={canvasRef} tier={tier} />;
 }
 
-function AnimatedWebGL({ canvasRef, tier, isActive }) {
-  const activeRef = useRef(isActive);
-  useEffect(() => { activeRef.current = isActive; }, [isActive]);
+function AnimatedWebGL({ canvasRef, tier }) {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -113,7 +104,7 @@ void main(void){
     col+=.00125/d*(cos(sin(i)*vec3(1,2,3))+1.);
     float b=noise(i+p+bg*1.731);
     col+=.002*b/length(max(p,vec2(b*p.x*.02,p.y)));
-    col=mix(col,vec3(bg*.25,bg*.137,bg*.05),d);
+    col=mix(col,vec3(bg*.05,bg*.1,bg*.35),d);
   }
   O=vec4(col,1);
 }`;
@@ -133,7 +124,7 @@ void main(void){
 
     const buf = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, 1, -1, -1, 1, 1, 1, -1]), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,1,-1,-1,1,1,1,-1]), gl.STATIC_DRAW);
     const posLoc = gl.getAttribLocation(prog, "position");
     gl.enableVertexAttribArray(posLoc); gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
 
@@ -152,7 +143,6 @@ void main(void){
     let animId, last = 0;
     const render = (now = 0) => {
       animId = requestAnimationFrame(render);
-      if (!activeRef.current) return;
       if (now - last < INTERVAL) return;
       last = now;
       gl.uniform1f(uTime, now * 0.001);
