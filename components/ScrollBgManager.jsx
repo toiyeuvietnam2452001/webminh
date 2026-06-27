@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
 
-const NeuralNoise = dynamic(() => import("./NeuralNoise"), { ssr: false });
+const NeuralNoise      = dynamic(() => import("./NeuralNoise"),      { ssr: false });
 const AnimatedShaderBG = dynamic(() => import("./AnimatedShaderBG"), { ssr: false });
 
 /*
@@ -16,7 +16,7 @@ const AnimatedShaderBG = dynamic(() => import("./AnimatedShaderBG"), { ssr: fals
 */
 
 const CSS_BG = [
-  "radial-gradient(ellipse at 55% 38%, #4a0096 0%, #280050 38%, #100020 72%, #060010 100%)",
+  "radial-gradient(ellipse at 55% 38%, #00857a 0%, #004d45 38%, #001f1a 72%, #000a08 100%)",
   "radial-gradient(ellipse at 42% 55%, #004a70 0%, #002545 40%, #001025 72%, #000810 100%)",
 ];
 
@@ -41,27 +41,27 @@ function getMs() {
 
 export default function ScrollBgManager() {
   /* Luôn render ngay — không có null */
-  const [layers, setLayers] = useState([{ uid: 0, idx: 0, opacity: 1 }]);
-  const [shaderIdx, setShaderIdx] = useState(0);
+  const [layers, setLayers]   = useState([{ uid: 0, idx: 0, opacity: 1 }]);
+  const [shaderIdx, setShaderIdx]     = useState(0);
   const [shaderVisible, setShaderVisible] = useState(true);
-  const [useShader, setUseShader] = useState(false);
+  const [useShader, setUseShader]     = useState(false);
 
   const activeRef = useRef(0);
-  const uidRef = useRef(1);
-  const timerCSS = useRef(null);
+  const uidRef    = useRef(1);
+  const timerCSS  = useRef(null);
   const timerShdr = useRef(null);
-  const msRef = useRef(900);
+  const msRef     = useRef(900);
 
   useEffect(() => {
     msRef.current = getMs();
-    /* Cả desktop/mobile đều dùng shader nếu hỗ trợ WebGL2 */
-    if (canWebGL2()) setUseShader(true);
+    /* Chỉ dùng shader trên desktop có WebGL2 */
+    if (!isMobileDevice() && canWebGL2()) setUseShader(true);
   }, []);
 
   const crossfadeTo = (next) => {
     if (next === activeRef.current) return;
     activeRef.current = next;
-    const ms = msRef.current;
+    const ms  = msRef.current;
     const uid = uidRef.current++;
 
     /* CSS crossfade */
@@ -74,9 +74,14 @@ export default function ScrollBgManager() {
       setLayers([{ uid, idx: next, opacity: 1 }]);
     }, ms + 200);
 
-    /* Khác với cũ: Shader chỉ cần đổi Index để tự CSS crossfade, vì 2 Node đã mount sẵn */
+    /* Shader crossfade đồng bộ — fade out → đổi → fade in */
     if (useShader) {
-      setShaderIdx(next);
+      setShaderVisible(false);
+      clearTimeout(timerShdr.current);
+      timerShdr.current = setTimeout(() => {
+        setShaderIdx(next);
+        setShaderVisible(true);
+      }, ms * 0.5);
     }
   };
 
@@ -120,7 +125,7 @@ export default function ScrollBgManager() {
         />
       ))}
 
-      {/* WebGL shader — mounted cả 2 tránh compile lag, chuyển qua lại bằng opacity */}
+      {/* WebGL shader — chỉ desktop, cũng z-index 0 */}
       {useShader && (
         <div
           style={{
@@ -128,22 +133,14 @@ export default function ScrollBgManager() {
             inset: 0,
             zIndex: 0,
             pointerEvents: "none",
+            opacity: shaderVisible ? 1 : 0,
+            transition: `opacity ${ms * 0.5}ms cubic-bezier(0.45, 0, 0.55, 1)`,
           }}
         >
-          <div style={{
-            position: "absolute", inset: 0,
-            opacity: shaderIdx === 0 ? 1 : 0,
-            transition: `opacity ${ms * 0.5}ms cubic-bezier(0.45, 0, 0.55, 1)`,
-          }}>
-            <NeuralNoise isActive={shaderIdx === 0} color={[0.4, 0.1, 0.88]} speed={0.001} />
-          </div>
-          <div style={{
-            position: "absolute", inset: 0,
-            opacity: shaderIdx === 1 ? 1 : 0,
-            transition: `opacity ${ms * 0.5}ms cubic-bezier(0.45, 0, 0.55, 1)`,
-          }}>
-            <AnimatedShaderBG isActive={shaderIdx === 1} />
-          </div>
+          {shaderIdx === 0
+            ? <NeuralNoise color={[0.0, 0.65, 0.55]} speed={0.001} />
+            : <AnimatedShaderBG />
+          }
         </div>
       )}
     </>
