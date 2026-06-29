@@ -21,15 +21,20 @@ const projects = [
   { name: "Eco Retreat", image: "/projects/eco-retreat.jpg" },
 ];
 
-function ProjectCard({ name, image }) {
+function ProjectCard({ name, image, index = 0 }) {
   const [imgError, setImgError] = useState(false);
   return (
-    <div style={{
-      borderRadius: "16px", overflow: "hidden",
-      border: "1px solid rgba(255,255,255,0.08)",
-      background: "rgba(255,255,255,0.03)",
-      transition: "transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease",
-    }}
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{ duration: 0.6, delay: (index % 4) * 0.1 }}
+      style={{
+        borderRadius: "16px", overflow: "hidden",
+        border: "1px solid rgba(255,255,255,0.08)",
+        background: "rgba(255,255,255,0.03)",
+        transition: "transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease",
+      }}
       onMouseEnter={e => {
         e.currentTarget.style.transform = "translateY(-6px)";
         e.currentTarget.style.boxShadow = "0 20px 40px rgba(0,212,255,0.12)";
@@ -47,21 +52,21 @@ function ProjectCard({ name, image }) {
         ) : (
           <div style={{
             position: "absolute", inset: 0,
-            background: "linear-gradient(135deg, rgba(0,212,255,0.08) 0%, rgba(124,92,252,0.08) 100%)",
+            background: "linear-gradient(135deg, rgba(0,212,255,0.08) 10%, rgba(124,92,252,0.08) 100%)",
             display: "flex", alignItems: "center", justifyContent: "center",
           }}>
-            <span style={{ fontSize: "2rem", opacity: 0.3 }}>🏙️</span>
+            <span style={{ fontSize: "2.5rem", opacity: 0.3 }}>🏙️</span>
           </div>
         )}
         <div style={{
-          position: "absolute", bottom: 0, left: 0, right: 0, height: "50%",
-          background: "linear-gradient(to top, rgba(0,0,0,0.7), transparent)",
+          position: "absolute", bottom: 0, left: 0, right: 0, height: "60%",
+          background: "linear-gradient(to top, rgba(0,0,0,0.85), transparent)",
         }} />
       </div>
-      <div style={{ padding: "16px 18px" }}>
-        <p style={{ color: "#fff", fontWeight: 600, fontSize: "0.9rem", lineHeight: 1.5, margin: 0, whiteSpace: "pre-line" }}>{name}</p>
+      <div style={{ padding: "18px 20px" }}>
+        <p style={{ color: "#fff", fontWeight: 600, fontSize: "0.95rem", lineHeight: 1.5, margin: 0, whiteSpace: "pre-line" }}>{name}</p>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -245,27 +250,37 @@ export default function AboutSection() {
         <div className="container" style={{ position: "relative", zIndex: 2, maxWidth: "820px", width: "100%" }}>
 
           {/* Meta badge */}
-          <div style={{
-            display: "inline-flex", alignItems: "center", gap: "8px",
-            background: "rgba(0,130,251,0.15)", border: "1px solid rgba(0,130,251,0.4)",
-            borderRadius: "999px", padding: "6px 18px",
-            marginBottom: "28px", fontSize: "13px", color: "#4da6ff", fontWeight: 500,
-          }}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: "8px",
+              background: "rgba(0,130,251,0.15)", border: "1px solid rgba(0,130,251,0.4)",
+              borderRadius: "999px", padding: "6px 18px",
+              marginBottom: "28px", fontSize: "13px", color: "#4da6ff", fontWeight: 500,
+            }}>
             <svg width="15" height="15" viewBox="0 0 32 32" fill="none">
               <path d="M5 16C5 10.5 9 6 14 6C17.5 6 20 8.5 22.5 12L16 16L22.5 20C20 23.5 17.5 26 14 26C9 26 5 21.5 5 16Z" fill="#4da6ff" />
               <path d="M27 16C27 21.5 23 26 18 26C14.5 26 12 23.5 9.5 20L16 16L9.5 12C12 8.5 14.5 6 18 6C23 6 27 10.5 27 16Z" fill="#4da6ff" />
             </svg>
             Meta Business Partner
-          </div>
+          </motion.div>
 
-          <h1 style={{
-            fontSize: "clamp(2.4rem, 5.5vw, 3.8rem)", fontWeight: 800, lineHeight: 1.15,
-            background: "linear-gradient(135deg, #ffffff 0%, #00d4ff 55%, #7c5cfc 100%)",
-            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-            backgroundClip: "text", marginBottom: "36px",
-          }}>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            style={{
+              fontSize: "clamp(2.4rem, 5.5vw, 3.8rem)", fontWeight: 800, lineHeight: 1.15,
+              background: "linear-gradient(135deg, #ffffff 0%, #00d4ff 55%, #7c5cfc 100%)",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+              backgroundClip: "text", marginBottom: "36px",
+            }}>
             Nguyễn Công Minh
-          </h1>
+          </motion.h1>
 
           <BlurredStaggerParagraphs
             paragraphs={[
@@ -276,22 +291,35 @@ export default function AboutSection() {
             ]}
           />
 
-          <div style={{ marginTop: "40px" }}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.8 }}
+            style={{ marginTop: "40px" }}
+          >
             <a href="/#contact" className="btn btn-primary" style={{ display: "inline-flex", gap: "8px", alignItems: "center" }}>
               Liên hệ hợp tác <ArrowRight size={18} />
             </a>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* ── DỰ ÁN TIÊU BIỂU ── */}
       <section style={{ position: "relative", zIndex: 1, padding: "80px 0", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
         <div className="container">
-          <p style={{ color: "#00d4ff", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "2.5px", marginBottom: "12px", fontWeight: 600 }}>Portfolio</p>
-          <h2 style={{ fontSize: "clamp(1.8rem, 3vw, 2.4rem)", fontWeight: 700, marginBottom: "8px" }}>Dự án tiêu biểu</h2>
-          <p style={{ color: "rgba(255,255,255,0.4)", marginBottom: "48px", fontSize: "0.95rem" }}>Những chiến dịch Performance Marketing đã triển khai thực chiến</p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.7 }}
+          >
+            <p style={{ color: "#00d4ff", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "2.5px", marginBottom: "12px", fontWeight: 600 }}>Portfolio</p>
+            <h2 style={{ fontSize: "clamp(1.8rem, 3vw, 2.4rem)", fontWeight: 700, marginBottom: "8px" }}>Dự án tiêu biểu</h2>
+            <p style={{ color: "rgba(255,255,255,0.4)", marginBottom: "48px", fontSize: "0.95rem" }}>Những chiến dịch Performance Marketing đã triển khai thực chiến</p>
+          </motion.div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "20px" }}>
-            {projects.map((p, i) => <ProjectCard key={i} name={p.name} image={p.image} />)}
+            {projects.map((p, i) => <ProjectCard key={i} name={p.name} image={p.image} index={i} />)}
           </div>
         </div>
       </section>
@@ -299,20 +327,34 @@ export default function AboutSection() {
       {/* ── META BUSINESS PARTNER ── */}
       <section style={{ position: "relative", zIndex: 1, padding: "72px 0", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
         <div className="container" style={{ textAlign: "center" }}>
-          <p style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "2.5px", marginBottom: "48px", fontWeight: 600 }}>Chứng nhận chính thức</p>
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.6 }}
+            style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "2.5px", marginBottom: "48px", fontWeight: 600 }}
+          >
+            Chứng nhận chính thức
+          </motion.p>
           <MetaPartnerCard />
         </div>
       </section>
 
       {/* ── CTA ── */}
       <section style={{ position: "relative", zIndex: 1, padding: "80px 0", textAlign: "center" }}>
-        <div className="container">
+        <motion.div
+          className="container"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.7 }}
+        >
           <h2 style={{ fontSize: "clamp(1.8rem, 3vw, 2.2rem)", fontWeight: 700, marginBottom: "16px" }}>Sẵn sàng hợp tác?</h2>
           <p style={{ color: "rgba(255,255,255,0.4)", marginBottom: "36px", fontSize: "0.95rem" }}>Cùng xây dựng chiến lược Performance Marketing cho dự án BĐS của anh/chị</p>
           <a href="/#contact" className="btn btn-primary" style={{ display: "inline-flex", gap: "8px", alignItems: "center" }}>
             Liên hệ ngay <ArrowRight size={18} />
           </a>
-        </div>
+        </motion.div>
       </section>
 
     </main>
