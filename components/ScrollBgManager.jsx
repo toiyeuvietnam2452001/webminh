@@ -29,8 +29,8 @@ function getMs() {
 export default function ScrollBgManager() {
   const [layers, setLayers] = useState([{ uid: 0, idx: 0, opacity: 1 }]);
   const [shaderIdx, setShaderIdx] = useState(0);
-  const [shaderVisible, setShaderVisible] = useState(true);
   const [useShader, setUseShader] = useState(false);
+  const [activeShaders, setActiveShaders] = useState({ 0: true, 1: false });
 
   const activeRef = useRef(0);
   const uidRef = useRef(1);
@@ -63,6 +63,11 @@ export default function ScrollBgManager() {
     // Shader crossfade
     if (useShader) {
       setShaderIdx(next);
+      setActiveShaders(prev => ({ ...prev, [next]: true }));
+      clearTimeout(timerShdr.current);
+      timerShdr.current = setTimeout(() => {
+        setActiveShaders({ [next]: true });
+      }, ms + 200);
     }
   };
 
@@ -106,14 +111,14 @@ export default function ScrollBgManager() {
             opacity: shaderIdx === 0 ? 1 : 0,
             transition: `opacity ${ms}ms cubic-bezier(0.45, 0, 0.55, 1)`,
           }}>
-            <NeuralNoise color={[0.0, 0.72, 1.0]} speed={0.001} />
+            <NeuralNoise color={[0.0, 0.72, 1.0]} speed={0.001} isActive={activeShaders[0] || false} />
           </div>
           <div style={{
             position: "absolute", inset: 0,
             opacity: shaderIdx === 1 ? 1 : 0,
             transition: `opacity ${ms}ms cubic-bezier(0.45, 0, 0.55, 1)`,
           }}>
-            <AnimatedShaderBG />
+            <AnimatedShaderBG isActive={activeShaders[1] || false} />
           </div>
         </div>
       )}

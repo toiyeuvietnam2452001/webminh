@@ -38,16 +38,19 @@ function MobileAnimatedBG() {
   return <div style={{ position: "fixed", inset: 0, background: "radial-gradient(ellipse at 40% 55%, #001a4d 0%, #000d2e 35%, #00061a 65%, #000308 100%)", pointerEvents: "none" }} />;
 }
 
-export default function AnimatedShaderBG() {
+export default function AnimatedShaderBG({ isActive = true }) {
   const canvasRef = useRef(null);
   const [tier, setTier] = useState(null);
   useEffect(() => { setTier(detectTier()); }, []);
   if (tier === null) return null;
   if (tier === "low") return <MobileAnimatedBG />;
-  return <AnimatedWebGL canvasRef={canvasRef} tier={tier} />;
+  return <AnimatedWebGL canvasRef={canvasRef} tier={tier} isActive={isActive} />;
 }
 
-function AnimatedWebGL({ canvasRef, tier }) {
+function AnimatedWebGL({ canvasRef, tier, isActive }) {
+  const activeRef = useRef(isActive);
+  useEffect(() => { activeRef.current = isActive; }, [isActive]);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -116,7 +119,11 @@ void main(void){
     };
     resize(); window.addEventListener("resize", resize);
     let animId;
-    const render = (now = 0) => { animId = requestAnimationFrame(render); gl.uniform1f(uTime, now * 0.001); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
+    const render = (now = 0) => {
+      animId = requestAnimationFrame(render);
+      if (!activeRef.current) return;
+      gl.uniform1f(uTime, now * 0.001); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    };
     animId = requestAnimationFrame(render);
     const onVis = () => { if (document.hidden) cancelAnimationFrame(animId); else animId = requestAnimationFrame(render); };
     document.addEventListener("visibilitychange", onVis);
