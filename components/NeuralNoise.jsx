@@ -28,8 +28,8 @@ function detectTier() {
 
 const CONFIGS = {
   high: { neuralIter: 15, fps: 60, pixelRatio: 2 },
-  medium: { neuralIter: 10, fps: 30, pixelRatio: 1.5 },
-  mobile: { neuralIter: 7, fps: 30, pixelRatio: 1 },
+  medium: { neuralIter: 10, fps: 30, pixelRatio: 2.5 },
+  mobile: { neuralIter: 9, fps: 30, pixelRatio: 2.5 },
   low: null,
 };
 
@@ -55,7 +55,7 @@ function NeuralWebGL({ canvasRef, tier, color, speed }) {
     const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
     if (!gl) return;
     const ITER = config.neuralIter;
-    const pointer = { x: 0.5, y: 0.5, tX: 0.5, tY: 0.5 };
+    const pointer = { x: window.innerWidth / 2, y: window.innerHeight / 2, tX: window.innerWidth / 2, tY: window.innerHeight / 2 };
     const vsSource = `precision mediump float;varying vec2 vUv;attribute vec2 a_position;void main(){vUv=0.5*(a_position+1.0);gl_Position=vec4(a_position,0.0,1.0);}`;
     const fsSource = `
       #ifdef GL_FRAGMENT_PRECISION_HIGH
@@ -110,7 +110,7 @@ function NeuralWebGL({ canvasRef, tier, color, speed }) {
       spd: gl.getUniformLocation(prog, "u_speed"),
     };
     gl.uniform3f(u.color, color[0], color[1], color[2]);
-    gl.uniform1f(u.spd, speed);
+    gl.uniform1f(u.spd, speed * 1000.0);
     const resize = () => {
       const w = canvas.clientWidth || window.innerWidth;
       const h = canvas.clientHeight || window.innerHeight;
