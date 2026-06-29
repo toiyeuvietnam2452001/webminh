@@ -94,7 +94,7 @@ void main(void){
     col+=.002*b/length(max(p,vec2(b*p.x*.02,p.y)));
     col=mix(col,vec3(bg*.05,bg*.1,bg*.35),d);
   }
-  col = pow(max(col, vec3(0.0)), vec3(0.9)) * 1.5;
+  col = pow(max(col, vec3(0.0)), vec3(0.9)) * 1.25;
   O=vec4(col,1);
 }`;
     const mkS = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null; };

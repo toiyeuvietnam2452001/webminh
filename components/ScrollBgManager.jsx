@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
 
-const NeuralNoise      = dynamic(() => import("./NeuralNoise"),      { ssr: false });
+const NeuralNoise = dynamic(() => import("./NeuralNoise"), { ssr: false });
 const AnimatedShaderBG = dynamic(() => import("./AnimatedShaderBG"), { ssr: false });
 
 const CSS_BG = [
@@ -27,16 +27,16 @@ function getMs() {
 }
 
 export default function ScrollBgManager() {
-  const [layers,        setLayers]        = useState([{ uid:0, idx:0, opacity:1 }]);
-  const [shaderIdx,     setShaderIdx]     = useState(0);
+  const [layers, setLayers] = useState([{ uid: 0, idx: 0, opacity: 1 }]);
+  const [shaderIdx, setShaderIdx] = useState(0);
   const [shaderVisible, setShaderVisible] = useState(true);
-  const [useShader,     setUseShader]     = useState(false);
+  const [useShader, setUseShader] = useState(false);
 
   const activeRef = useRef(0);
-  const uidRef    = useRef(1);
-  const timerCSS  = useRef(null);
+  const uidRef = useRef(1);
+  const timerCSS = useRef(null);
   const timerShdr = useRef(null);
-  const msRef     = useRef(800);
+  const msRef = useRef(800);
 
   useEffect(() => {
     msRef.current = getMs();
@@ -47,38 +47,33 @@ export default function ScrollBgManager() {
   const crossfadeTo = (next) => {
     if (next === activeRef.current) return;
     activeRef.current = next;
-    const ms  = msRef.current;
+    const ms = msRef.current;
     const uid = uidRef.current++;
 
     // CSS crossfade
-    setLayers(prev => [...prev, { uid, idx:next, opacity:0 }]);
+    setLayers(prev => [...prev, { uid, idx: next, opacity: 0 }]);
     requestAnimationFrame(() => requestAnimationFrame(() => {
-      setLayers(prev => prev.map(l => ({ ...l, opacity: l.uid===uid ? 1 : 0 })));
+      setLayers(prev => prev.map(l => ({ ...l, opacity: l.uid === uid ? 1 : 0 })));
     }));
     clearTimeout(timerCSS.current);
     timerCSS.current = setTimeout(() => {
-      setLayers([{ uid, idx:next, opacity:1 }]);
+      setLayers([{ uid, idx: next, opacity: 1 }]);
     }, ms + 200);
 
-    // Shader crossfade: fade out → swap → fade in
+    // Shader crossfade
     if (useShader) {
-      setShaderVisible(false);
-      clearTimeout(timerShdr.current);
-      timerShdr.current = setTimeout(() => {
-        setShaderIdx(next);
-        setShaderVisible(true);
-      }, ms * 0.5);
+      setShaderIdx(next);
     }
   };
 
   useEffect(() => {
-    const vis = { process:false, pricing:false };
+    const vis = { process: false, pricing: false };
     const decide = () => crossfadeTo((vis.process || vis.pricing) ? 1 : 0);
     const obs = new IntersectionObserver(
-      entries => { entries.forEach(e => { vis[e.target.id]=e.isIntersecting; }); decide(); },
+      entries => { entries.forEach(e => { vis[e.target.id] = e.isIntersecting; }); decide(); },
       { threshold: 0.08 }
     );
-    ["process","pricing"].forEach(id => {
+    ["process", "pricing"].forEach(id => {
       const el = document.getElementById(id);
       if (el) obs.observe(el);
     });
@@ -92,26 +87,34 @@ export default function ScrollBgManager() {
       {/* CSS gradient base — mọi thiết bị, luôn hiện */}
       {layers.map(({ uid, idx, opacity }) => (
         <div key={uid} style={{
-          position:"fixed", inset:0,
-          zIndex:0, pointerEvents:"none",
+          position: "fixed", inset: 0,
+          zIndex: 0, pointerEvents: "none",
           background: CSS_BG[idx],
           opacity,
-          transition:`opacity ${ms}ms cubic-bezier(0.45,0,0.55,1)`,
+          transition: `opacity ${ms}ms cubic-bezier(0.45,0,0.55,1)`,
         }} />
       ))}
 
-      {/* WebGL shader overlay — mobile + desktop, nếu có WebGL */}
+      {/* WebGL shader overlay — mounted cả 2 tránh compile lag, chuyển qua lại bằng opacity */}
       {useShader && (
         <div style={{
-          position:"fixed", inset:0,
-          zIndex:0, pointerEvents:"none",
-          opacity: shaderVisible ? 1 : 0,
-          transition:`opacity ${ms*0.5}ms cubic-bezier(0.45,0,0.55,1)`,
+          position: "fixed", inset: 0,
+          zIndex: 0, pointerEvents: "none",
         }}>
-          {shaderIdx === 0
-            ? <NeuralNoise color={[0.0, 0.72, 1.0]} speed={0.001} />
-            : <AnimatedShaderBG />
-          }
+          <div style={{
+            position: "absolute", inset: 0,
+            opacity: shaderIdx === 0 ? 1 : 0,
+            transition: `opacity ${ms}ms cubic-bezier(0.45, 0, 0.55, 1)`,
+          }}>
+            <NeuralNoise color={[0.0, 0.72, 1.0]} speed={0.001} />
+          </div>
+          <div style={{
+            position: "absolute", inset: 0,
+            opacity: shaderIdx === 1 ? 1 : 0,
+            transition: `opacity ${ms}ms cubic-bezier(0.45, 0, 0.55, 1)`,
+          }}>
+            <AnimatedShaderBG />
+          </div>
         </div>
       )}
     </>
