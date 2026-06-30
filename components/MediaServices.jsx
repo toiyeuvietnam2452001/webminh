@@ -1,3 +1,5 @@
+"use client";
+import { useEffect, useRef, useState } from 'react';
 import styles from './MediaServices.module.css';
 import { Camera, PlaySquare, Smartphone, UserCheck } from 'lucide-react';
 
@@ -52,6 +54,55 @@ const services = [
     }
 ];
 
+/* Card tự theo dõi viewport, fade-up khi cuộn tới */
+function RevealCard({ service, index }) {
+    const ref = useRef(null);
+    const [visible, setVisible] = useState(false);
+
+    useEffect(() => {
+        const el = ref.current;
+        if (!el) return;
+        const obs = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setVisible(true);
+                    obs.disconnect(); // chỉ hiện 1 lần, không lặp lại khi cuộn qua lại
+                }
+            },
+            { threshold: 0.15, rootMargin: "0px 0px -60px 0px" }
+        );
+        obs.observe(el);
+        return () => obs.disconnect();
+    }, []);
+
+    return (
+        <div
+            ref={ref}
+            className={styles.card}
+            style={{
+                opacity: visible ? 1 : 0,
+                transform: visible ? "translateY(0)" : "translateY(40px)",
+                transition: `opacity 0.7s ease ${index * 0.12}s, transform 0.7s cubic-bezier(0.22,1,0.36,1) ${index * 0.12}s`,
+            }}
+        >
+            <div className={styles.targetBadge}>{service.target}</div>
+            <div className={styles.cardTop}>
+                {service.icon}
+                <h3 className={styles.cardTitle}>{service.title}</h3>
+            </div>
+            <p className={styles.cardDesc}>{service.desc}</p>
+            <ul className={styles.pointList}>
+                {service.points.map((point, i) => (
+                    <li key={i} className={styles.pointItem}>
+                        <div className={styles.check}>✓</div>
+                        <span>{point}</span>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+}
+
 export default function MediaServices() {
     return (
         <section className={styles.section}>
@@ -66,22 +117,7 @@ export default function MediaServices() {
                 </div>
                 <div className={styles.grid}>
                     {services.map((service, index) => (
-                        <div key={index} className={styles.card}>
-                            <div className={styles.targetBadge}>{service.target}</div>
-                            <div className={styles.cardTop}>
-                                {service.icon}
-                                <h3 className={styles.cardTitle}>{service.title}</h3>
-                            </div>
-                            <p className={styles.cardDesc}>{service.desc}</p>
-                            <ul className={styles.pointList}>
-                                {service.points.map((point, i) => (
-                                    <li key={i} className={styles.pointItem}>
-                                        <div className={styles.check}>✓</div>
-                                        <span>{point}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
+                        <RevealCard key={index} service={service} index={index} />
                     ))}
                 </div>
             </div>
