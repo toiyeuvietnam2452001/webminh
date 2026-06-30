@@ -1,3 +1,5 @@
+"use client";
+import { useEffect, useRef, useState } from 'react';
 import styles from './MediaEquipment.module.css';
 import { Video, Plane, Film, Mic } from 'lucide-react';
 
@@ -24,6 +26,45 @@ const equipments = [
     }
 ];
 
+function RevealCard({ item, index }) {
+    const ref = useRef(null);
+    const [visible, setVisible] = useState(false);
+
+    useEffect(() => {
+        const el = ref.current;
+        if (!el) return;
+        const obs = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setVisible(true);
+                    obs.disconnect();
+                }
+            },
+            { threshold: 0.15, rootMargin: "0px 0px -60px 0px" }
+        );
+        obs.observe(el);
+        return () => obs.disconnect();
+    }, []);
+
+    return (
+        <div
+            ref={ref}
+            className={styles.card}
+            style={{
+                opacity: visible ? 1 : 0,
+                transform: visible ? "translateY(0)" : "translateY(40px)",
+                transition: `opacity 0.7s ease ${index * 0.12}s, transform 0.7s cubic-bezier(0.22,1,0.36,1) ${index * 0.12}s`,
+            }}
+        >
+            <div className={styles.iconWrapper}>
+                {item.icon}
+            </div>
+            <h3 className={styles.itemTitle}>{item.title}</h3>
+            <p className={styles.itemDesc}>{item.desc}</p>
+        </div>
+    );
+}
+
 export default function MediaEquipment() {
     return (
         <section className={styles.section}>
@@ -39,13 +80,7 @@ export default function MediaEquipment() {
 
                 <div className={styles.grid}>
                     {equipments.map((item, index) => (
-                        <div key={index} className={styles.card}>
-                            <div className={styles.iconWrapper}>
-                                {item.icon}
-                            </div>
-                            <h3 className={styles.itemTitle}>{item.title}</h3>
-                            <p className={styles.itemDesc}>{item.desc}</p>
-                        </div>
+                        <RevealCard key={index} item={item} index={index} />
                     ))}
                 </div>
             </div>
