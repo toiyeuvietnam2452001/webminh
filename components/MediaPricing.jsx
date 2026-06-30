@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useRef, useState } from "react";
 import styles from "./MediaPricing.module.css";
 import { Check } from "lucide-react";
 
@@ -71,6 +72,63 @@ const PLANS = [
   },
 ];
 
+function RevealCard({ plan, index }) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -60px 0px" }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={`${styles.card} ${plan.highlight ? styles.highlighted : ""}`}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(40px)",
+        transition: `opacity 0.7s ease ${index * 0.1}s, transform 0.7s cubic-bezier(0.22,1,0.36,1) ${index * 0.1}s`,
+      }}
+    >
+      {plan.badge && (
+        <span className={styles.badge}>{plan.badge}</span>
+      )}
+      <p className={styles.planName}>{plan.name}</p>
+      <p className={styles.planSub}>{plan.sub}</p>
+      <div className={styles.price}>
+        {plan.price}
+        {plan.unit && <span className={styles.unit}>{plan.unit}</span>}
+      </div>
+      <ul className={styles.features}>
+        {plan.features.map((f, j) => (
+          <li key={j}>
+            <Check size={15} className={styles.checkIcon} />
+            {f}
+          </li>
+        ))}
+      </ul>
+      <button
+        onClick={scrollToContact}
+        className={`${styles.cta} ${plan.ctaStyle === "primary" ? styles.ctaPrimary : styles.ctaOutline}`}
+      >
+        {plan.cta}
+      </button>
+    </div>
+  );
+}
+
 export default function MediaPricing() {
   return (
     <section className="section">
@@ -85,34 +143,7 @@ export default function MediaPricing() {
 
         <div className={styles.grid}>
           {PLANS.map((plan, i) => (
-            <div
-              key={i}
-              className={`${styles.card} ${plan.highlight ? styles.highlighted : ""}`}
-            >
-              {plan.badge && (
-                <span className={styles.badge}>{plan.badge}</span>
-              )}
-              <p className={styles.planName}>{plan.name}</p>
-              <p className={styles.planSub}>{plan.sub}</p>
-              <div className={styles.price}>
-                {plan.price}
-                {plan.unit && <span className={styles.unit}>{plan.unit}</span>}
-              </div>
-              <ul className={styles.features}>
-                {plan.features.map((f, j) => (
-                  <li key={j}>
-                    <Check size={15} className={styles.checkIcon} />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <button
-                onClick={scrollToContact}
-                className={`${styles.cta} ${plan.ctaStyle === "primary" ? styles.ctaPrimary : styles.ctaOutline}`}
-              >
-                {plan.cta}
-              </button>
-            </div>
+            <RevealCard key={i} plan={plan} index={i} />
           ))}
         </div>
       </div>
